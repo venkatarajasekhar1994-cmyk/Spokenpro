@@ -1,4 +1,4 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,30 +7,33 @@
     <meta name="description" content="SpeakPro - Learn English & Hindi through conversation">
     <title>SpeakPro - Glass PWA</title>
     
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="1000094592.jpg">
 
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Ramabhadra&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* GLOBAL GLASS STYLES */
         body { 
             font-family: 'Open Sans', sans-serif; 
-            background-image: url('1000094592.jpg'); 
-            background-size: cover; 
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
+            background-color: #f8fafc; /* slate-50 */
             min-height: 100vh;
             -webkit-tap-highlight-color: transparent; 
+            transition: background-color 0.3s ease;
         }
-        /* ... మీ పాత స్టైల్స్ యధావిధిగా ఉంచండి ... */
+
+        /* Glass Utility Classes */
         .glass-panel {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
@@ -49,7 +52,7 @@
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.6);
-            color: #1e293b;
+            color: #020617; /* slate-950 - PURE BLACK TEXT FIX */
             border-radius: 18px 18px 18px 0;
         }
         .glass-input {
@@ -57,6 +60,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
+
         .font-telugu { font-family: 'Ramabhadra', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
@@ -70,27 +74,73 @@
             70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
+        
         .bubble-user { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-radius: 18px 18px 0 18px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
         .feedback-box { background: rgba(255, 251, 235, 0.9); border-left: 4px solid #f59e0b; color: #92400e; font-size: 0.85rem; backdrop-filter: blur(4px); }
+        
+        img[src*="placehold.co"] {
+            background-color: #e2e8f0; color: #475569; object-fit: cover;
+            text-align: center; font-size: 12px; font-family: 'Open Sans', sans-serif;
+        }
+
+        /* --- DARK MODE STYLES --- */
+        .dark body {
+            background-color: #0f172a; /* slate-900 */
+        }
+        .dark .glass-panel {
+            background: rgba(26, 38, 58, 0.75); 
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        .dark .glass-card {
+            background: rgba(26, 38, 58, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.4);
+        }
+        .dark .glass-bubble-ai {
+            background: rgba(43, 56, 78, 0.85);
+            border: 1px solid rgba(63, 80, 102, 1);
+            color: #f1f5f9; /* slate-100 */
+        }
+        .dark .glass-input {
+            background: rgba(43, 56, 78, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            color: white;
+        }
+        .dark .feedback-box {
+            background: rgba(60, 44, 7, 0.9);
+            border-left: 4px solid #b45309;
+            color: #fef9c3; 
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        // ... మీ రియాక్ట్ కోడ్ మొత్తం ఇక్కడ కాపీ చేయండి (పాత కోడ్‌లో మార్పులు అవసరం లేదు) ...
-        // కేవలం ఈ కింద ఉన్న service worker రిజిస్ట్రేషన్ కోడ్ మాత్రం సరిచూసుకోండి.
-
         const { useState, useEffect, useMemo, useRef } = React;
-        
-        // (SCENARIOS, CURRICULUM, AUDIO UTILS, API GENERATION, APP COMPONENT - ఇవన్నీ మీ పాత కోడ్ లాగే ఉంచండి)
-        // ... PASTE ALL YOUR REACT CODE HERE ...
 
-        /* గమనిక: నేను ఇక్కడ రియాక్ట్ కోడ్ రాయడం లేదు ఎందుకంటే అది చాలా పెద్దది. 
-           మీరు మీ పాత index.html లోని <script type="text/babel"> లో ఉన్న కోడ్ 
-           మొత్తం అలాగే ఉంచండి. కేవలం చివరన ఉన్న Service Worker రిజిస్ట్రేషన్ 
-           కింద ఇచ్చిన విధంగా ఉందో లేదో చూసుకోండి.
-        */
+        class ErrorBoundary extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false, error: null, errorInfo: null };
+            }
+            static getDerivedStateFromError(error) { return { hasError: true, error: error }; }
+            componentDidCatch(error, errorInfo) { this.setState({ errorInfo: errorInfo }); }
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div style={{ padding: '20px', height: '100vh', overflowY: 'auto' }} className="bg-white text-red-700 dark:bg-slate-900 dark:text-red-400">
+                            <h1 className="text-xl font-bold">App Error</h1>
+                            <p className="mt-2 text-black dark:text-slate-200">Please reload. If error persists, check API Key.</p>
+                            <pre style={{ color: 'black', background: '#f3f4f6', padding: '10px', borderRadius: '5px', marginTop: '15px', whiteSpace: 'pre-wrap', wordWrap: 'break-word', border: '1px solid #e5e7eb' }} className="text-black bg-slate-100 dark:text-slate-200 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                <strong>Error: {this.state.error && this.state.error.toString()}</strong>
+                            </pre>
+                            <button onClick={() => window.location.reload()} className="mt-4 bg-blue-600 text-white p-2 rounded">Reload App</button>
+                        </div>
+                    );
+                }
+                return this.props.children; 
+            }
+        }
 
         const SCENARIOS = [
             { id: 1, icon: "ph-users-three", title: "Family (కుటుంబం)", prompt: "Role: Caring Mother. Context: Asking child about school and lunch.", startMsg: "Hello my dear! How was school today? Did you eat your lunch?" },
@@ -169,39 +219,17 @@
         ];
 
         let currentlySpeakingText = null;
-
         const stopAudio = () => {
-            window.speechSynthesis.cancel();
-            currentlySpeakingText = null;
-        };
-
-        const speak = (text, lang) => {
-            if (!window.speechSynthesis) return;
-
-            if (window.speechSynthesis.speaking && text === currentlySpeakingText) {
-                stopAudio(); return;
+            if (window.speechSynthesis && typeof window.speechSynthesis.cancel === 'function') {
+                window.speechSynthesis.cancel();
             }
-            stopAudio(); 
-            
-            const cleanText = text.replace(/[*_#`]/g, '').replace(/[\(\[].*?[\)\]]/g, '').replace(/-/g, ' ');
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            
-            if (lang === 'te') utterance.lang = 'te-IN';
-            else if (lang === 'hi') utterance.lang = 'hi-IN';
-            else utterance.lang = 'en-US';
-            
-            utterance.rate = 0.9;
-            utterance.onstart = () => { currentlySpeakingText = text; };
-            utterance.onend = () => { currentlySpeakingText = null; };
-
-            window.speechSynthesis.speak(utterance);
+            currentlySpeakingText = null;
         };
 
         let lastRequestTimestamp = parseInt(localStorage.getItem('last_req_time') || '0');
         let requestCount = parseInt(localStorage.getItem('req_count_10m') || '0');
         let reqResetTime = parseInt(localStorage.getItem('req_reset_time') || Date.now().toString());
-        
-        const RATE_LIMIT_DELAY = 6000; 
+        const RATE_LIMIT_DELAY = 7000; 
 
         const checkRateLimit = async (onWait) => {
             const now = Date.now();
@@ -211,7 +239,7 @@
                 if(onWait) onWait(Math.ceil(wait/1000));
                 await new Promise(r => setTimeout(r, wait));
             }
-            if (now - reqResetTime > 10 * 60 * 1000) { // 10 min reset
+            if (now - reqResetTime > 10 * 60 * 1000) { 
                 requestCount = 0;
                 reqResetTime = now;
             }
@@ -223,460 +251,29 @@
             return requestCount; 
         };
 
-        const generateLessonContent = async (apiKey, modelId, lessonInfo, qCount, onWait) => {
-            const usage = await checkRateLimit(onWait);
-            const prompt = `
-                Create lesson: "${lessonInfo.title}".
-                RULES:
-                1. CONCEPTS: Provide **detailed** explanations in Telugu. Give **at least 2** examples for each.
-                2. QUIZ QUESTIONS: Question in Telugu asking for translation (e.g., "అతను వెళ్లాడు' ని ఇంగ్లీష్‌లో ఏమంటారు?").
-                3. QUIZ OPTIONS: **ONLY Target Language** (English/Hindi). NO Telugu options.
-                4. QUIZ EXPLANATION: **Detailed Telugu explanation**, explaining *why* it's correct and *why* others are wrong.
-                5. COUNT: Exactly ${qCount} English Qs, ${qCount} Hindi Qs.
-                
-                Return ONLY VALID JSON:
-                {
-                    "teluguTitle": "...",
-                    "concepts": [{ "title": "...", "explanation": "Detailed Telugu...", "examples": [{ "te": "...", "en": "...", "hi": "..." }, { "te": "...", "en": "...", "hi": "..." }] }],
-                    "quizEnglish": [{ "question": "...", "options": ["En1", "En2"], "correct": 0, "explanation": "Detailed Telugu expl..." }],
-                    "quizHindi": [{ "question": "...", "options": ["Hi1", "Hi2"], "correct": 0, "explanation": "Detailed Telugu expl..." }]
+        const shuffleQuizData = (quizArray) => {
+            if(!quizArray) return [];
+            return quizArray.map(q => {
+                if (!q.options || !q.options.length) return q;
+                const originalOptions = q.options;
+                const correctAnswerText = originalOptions[q.correct];
+                let shuffledOptions = [...originalOptions];
+                for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
                 }
-            `;
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                if (response.status === 429) throw new Error("Rate Limit (429). Wait 10s.");
-                const data = await response.json();
-                if(data.error) throw new Error(data.error.message);
-                let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-                return JSON.parse(text);
-            } catch (e) { throw e; }
-        };
-
-        const callGeminiChat = async (apiKey, modelId, scenarioPrompt, userText, chatLang, onWait) => {
-            await checkRateLimit(onWait);
-            const targetLang = chatLang === 'en' ? 'English' : 'Hindi';
-            const prompt = `
-                Role-play Persona: ${scenarioPrompt}.
-                Lang: ${targetLang}. User: "${userText}".
-                RULES:
-                1. Reply in a natural, detailed, and conversational way (2-3 sentences) in ${targetLang}.
-                2. Provide a clear Telugu translation of your reply.
-                3. If user made grammar mistake: Provide a **detailed, step-by-step correction in Telugu**. Explain *what* was wrong and *how* to say it correctly (e.g., "మీరు 'I go' అన్నారు, కానీ 'I am going' అనాలి, ఎందుకంటే...").
-                4. If no mistake: "feedback" must be null.
-                
-                Output JSON: { "reply": "...", "te_translation": "...", "feedback": "..." }
-            `;
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                const data = await response.json();
-                let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-                return JSON.parse(text);
-            } catch (e) { return { reply: "Error.", te_translation: "లోపం.", feedback: null }; }
-        };
-
-        const App = () => {
-            const [view, setView] = useState('home'); 
-            const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
-            const [modelId, setModelId] = useState(localStorage.getItem('gemini_model_id') || 'gemini-2.5-flash');
-            const [showSettings, setShowSettings] = useState(false);
-            const [usageLevel, setUsageLevel] = useState(0);
-            
-            const [selectedLesson, setSelectedLesson] = useState(null);
-            const [lessonData, setLessonData] = useState(null);
-            const [prefLang, setPrefLang] = useState('en');
-            const [prefQCount, setPrefQCount] = useState(5);
-            const [quizState, setQuizState] = useState({ index: 0, score: 0, answered: false, selected: null, isCorrect: false, history: [] });
-            const [searchTerm, setSearchTerm] = useState('');
-
-            const [activeScenario, setActiveScenario] = useState(null);
-            const [chatLang, setChatLang] = useState('en'); 
-            const [messages, setMessages] = useState([]);
-            const [inputObj, setInputObj] = useState('');
-            const [isRecording, setIsRecording] = useState(false);
-            
-            const [loading, setLoading] = useState(false);
-            const [waitTime, setWaitTime] = useState(0);
-            const [error, setError] = useState(null);
-            const chatContainerRef = useRef(null);
-
-            useEffect(() => { if (waitTime > 0) { const t = setTimeout(() => setWaitTime(w => w - 1), 1000); return () => clearTimeout(t); } }, [waitTime]);
-            useEffect(() => { if (chatContainerRef.current) chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight; }, [messages]);
-            useEffect(() => { setUsageLevel(parseInt(localStorage.getItem('req_count_10m') || '0')); }, [view]);
-
-            const filteredCurriculum = useMemo(() => CURRICULUM.filter(l => l.title.toLowerCase().includes(searchTerm.toLowerCase())), [searchTerm]);
-
-            const saveSettings = () => {
-                localStorage.setItem('gemini_api_key', apiKey);
-                localStorage.setItem('gemini_model_id', modelId);
-                setShowSettings(false);
-            };
-
-            const handleStartLesson = async (lesson, forceRefresh = false) => {
-                if (!apiKey) { setShowSettings(true); return; }
-                setSelectedLesson(lesson);
-                setLoading(true); setWaitTime(0); setError(null);
-                try {
-                    const cacheKey = `speakpro_v7_l${lesson.id}_q${prefQCount}`;
-                    let data = localStorage.getItem(cacheKey);
-                    if (!forceRefresh && data) {
-                        await new Promise(r => setTimeout(r, 300));
-                        data = JSON.parse(data);
-                    } else {
-                        data = await generateLessonContent(apiKey, modelId, lesson, prefQCount, (t) => setWaitTime(t));
-                        localStorage.setItem(cacheKey, JSON.stringify(data));
-                        setUsageLevel(prev => prev + 1);
-                    }
-                    if (!data.concepts) throw new Error("AI Error. Refresh.");
-                    setLessonData(data);
-                    setView('lesson');
-                } catch (e) { setError(e.message); } finally { setLoading(false); }
-            };
-            
-            const startQuiz = () => {
-                setQuizState({ index: 0, score: 0, answered: false, selected: null, isCorrect: false, history: [] });
-                setView('quiz');
-            };
-
-            const handleStartChat = (scenario) => {
-                setActiveScenario(scenario);
-                let greeting = chatLang === 'en' ? scenario.startMsg : "नमस्ते! मैं आपकी कैसे मदद कर सकता हूँ?";
-                if (chatLang === 'en') greeting = scenario.startMsg;
-                setMessages([{ role: 'ai', text: greeting, translation: "సంభాషణ ప్రారంభం...", feedback: null }]);
-                setView('chat');
-            };
-
-            const handleSendChat = async () => {
-                if (!inputObj.trim() || !apiKey) return;
-                const userText = inputObj;
-                setInputObj('');
-                setMessages(p => [...p, { role: 'user', text: userText }]);
-                setLoading(true);
-                try {
-                    const data = await callGeminiChat(apiKey, modelId, activeScenario.prompt, userText, chatLang, (t) => setWaitTime(t));
-                    setMessages(p => [...p, { role: 'ai', text: data.reply, translation: data.te_translation, feedback: data.feedback }]);
-                    speak(data.reply, chatLang);
-                    setUsageLevel(prev => prev + 1);
-                } catch (e) { alert(e.message); } finally { setLoading(false); }
-            };
-
-            const startListening = () => {
-                if (!('webkitSpeechRecognition' in window)) { alert("No voice support."); return; }
-                const rec = new window.webkitSpeechRecognition();
-                rec.lang = chatLang === 'en' ? 'en-US' : 'hi-IN';
-                rec.onstart = () => setIsRecording(true);
-                rec.onend = () => setIsRecording(false);
-                rec.onresult = (e) => setInputObj(e.results[0][0].transcript);
-                rec.start();
-            };
-
-            if (loading && view !== 'chat') return (
-                <div className="h-screen flex flex-col items-center justify-center glass-panel p-6 text-center">
-                    {waitTime > 0 ? <div className="text-4xl font-bold text-blue-600 mb-2">{waitTime}s</div> : <i className="ph ph-spinner text-4xl text-blue-600 animate-spin-slow mb-4"></i>}
-                    <p className="text-gray-600 text-sm font-semibold">{waitTime > 0 ? "Safety Wait..." : "Generating..."}</p>
-                    {error && <div className="mt-4 text-red-500 text-xs bg-red-50 p-2 rounded">{error} <button onClick={() => {setError(null); handleStartLesson(selectedLesson, true)}} className="underline font-bold">Retry</button></div>}
-                </div>
-            );
-
-            if (view === 'home') return (
-                <div className="min-h-screen p-4 pb-10 relative">
-                    <div className="glass-panel rounded-full h-2 mb-6 overflow-hidden">
-                        <div className="bg-gradient-to-r from-green-400 to-green-600 h-full transition-all duration-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" style={{width: `${Math.min(usageLevel * 10, 100)}%`}}></div>
-                    </div>
-                    <div className="flex justify-between items-center mb-8 relative z-10">
-                        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2 drop-shadow-sm"><i className="ph ph-student text-blue-600 bg-white/50 p-1 rounded-lg"></i> SpeakPro Glass</h1>
-                        <div className="flex gap-3">
-                             <button onClick={stopAudio} className="glass-card p-2.5 rounded-full text-red-500 hover:bg-white active:scale-95 transition-all"><i className="ph ph-speaker-slash text-xl"></i></button>
-                             <button onClick={() => setShowSettings(true)} className={`glass-card p-2.5 rounded-full hover:bg-white active:scale-95 transition-all ${apiKey ? 'text-gray-700' : 'text-amber-600 animate-bounce'}`}><i className="ph ph-gear text-xl"></i></button>
-                        </div>
-                    </div>
-                    {showSettings && (
-                        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-slide-in">
-                            <div className="glass-panel p-6 rounded-2xl w-full max-w-sm relative">
-                                <button onClick={() => setShowSettings(false)} className="absolute top-3 right-3 text-gray-500"><i className="ph ph-x text-lg"></i></button>
-                                <h3 className="font-bold text-lg mb-4 text-slate-800">Settings</h3>
-                                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Paste API Key" className="glass-input w-full p-3 rounded-xl text-sm mb-3 text-slate-800 placeholder-gray-500 outline-none focus:ring-2 focus:ring-blue-400" />
-                                <input type="text" value={modelId} onChange={e => setModelId(e.target.value)} placeholder="Model Name" className="glass-input w-full p-3 rounded-xl text-sm mb-4 text-slate-800 placeholder-gray-500 outline-none focus:ring-2 focus:ring-blue-400" />
-                                <button onClick={saveSettings} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition-colors">Save & Close</button>
-                            </div>
-                        </div>
-                    )}
-                    <div className="grid gap-5">
-                        <button onClick={() => setView('course_list')} className="glass-card p-6 rounded-3xl text-left relative overflow-hidden group active:scale-95 transition-transform hover:bg-white/80">
-                             <div className="absolute top-0 right-0 bg-blue-500 w-24 h-24 rounded-bl-full -mr-10 -mt-10 opacity-20"></div>
-                             <i className="ph ph-book-open text-4xl text-blue-700 mb-3 drop-shadow-sm"></i>
-                             <h2 className="text-xl font-bold text-slate-800">45-Day Course</h2>
-                             <p className="text-slate-600 text-sm mt-1 font-medium">Systematic Learning</p>
-                        </button>
-                        <button onClick={() => setView('roleplay_list')} className="glass-card p-6 rounded-3xl text-left relative overflow-hidden group active:scale-95 transition-transform hover:bg-white/80">
-                             <div className="absolute top-0 right-0 bg-emerald-500 w-24 h-24 rounded-bl-full -mr-10 -mt-10 opacity-20"></div>
-                             <i className="ph ph-chats-circle text-4xl text-emerald-700 mb-3 drop-shadow-sm"></i>
-                             <h2 className="text-xl font-bold text-slate-800">Role Play</h2>
-                             <p className="text-slate-600 text-sm mt-1 font-medium">25 Real Scenarios</p>
-                        </button>
-                    </div>
-                </div>
-            );
-
-            if (view === 'course_list') return (
-                <div className="min-h-screen p-4 pb-10">
-                    <div className="glass-panel sticky top-4 p-3 rounded-xl mb-6 z-20 flex items-center justify-between">
-                        <button onClick={() => setView('home')} className="text-gray-600 p-2 hover:bg-white/50 rounded-full"><i className="ph ph-arrow-left text-xl"></i></button>
-                        <h2 className="font-bold text-lg text-slate-800">Select Class</h2>
-                        <button onClick={stopAudio} className="text-red-500 p-2 hover:bg-white/50 rounded-full"><i className="ph ph-speaker-slash text-xl"></i></button>
-                    </div>
-                    <div className="glass-card p-4 rounded-2xl mb-4">
-                        <div className="flex gap-2 mb-3">
-                            <button onClick={() => setPrefLang('en')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${prefLang === 'en' ? 'bg-blue-600 text-white' : 'bg-white/60 text-gray-600'}`}>English</button>
-                            <button onClick={() => setPrefLang('hi')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${prefLang === 'hi' ? 'bg-orange-600 text-white' : 'bg-white/60 text-gray-600'}`}>Hindi</button>
-                        </div>
-                        <div className="flex gap-2">
-                            {[3, 5, 10].map(n => <button key={n} onClick={() => setPrefQCount(n)} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm ${prefQCount === n ? 'bg-slate-800 text-white' : 'bg-white/60 text-gray-600'}`}>{n} Qs</button>)}
-                        </div>
-                    </div>
-                    <div className="space-y-3">
-                        {filteredCurriculum.map(l => (
-                            <button key={l.id} onClick={() => handleStartLesson(l)} className="w-full glass-card p-4 rounded-2xl flex items-center justify-between active:scale-95 transition-all hover:bg-white/80">
-                                <div className="text-left"><span className="text-[10px] bg-blue-100/80 text-blue-700 px-2 py-1 rounded font-bold backdrop-blur-sm">Class {l.id}</span><h3 className="font-bold text-slate-800 text-sm mt-1">{l.title.split(':')[1]}</h3></div>
-                                <i className="ph ph-caret-right text-gray-500"></i>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            );
-
-            if (view === 'lesson') return (
-                <div className="min-h-screen pb-24">
-                    <div className="glass-panel sticky top-0 z-20 p-4 flex justify-between items-center border-b-0 shadow-lg backdrop-blur-xl">
-                        <button onClick={() => setView('course_list')} className="text-gray-600 p-2 hover:bg-white/50 rounded-full"><i className="ph ph-arrow-left text-xl"></i></button>
-                        <span className={`text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm ${prefLang === 'en' ? 'bg-blue-100/80 text-blue-800' : 'bg-orange-100/80 text-orange-800'}`}>{prefLang === 'en' ? 'English' : 'Hindi'} Mode</span>
-                        <div className="flex gap-2">
-                            <button onClick={stopAudio} className="p-2 rounded-full bg-red-50/80 text-red-500 hover:bg-red-100"><i className="ph ph-speaker-slash text-xl"></i></button>
-                            <button onClick={() => { if(confirm('Refresh?')) handleStartLesson(selectedLesson, true); }} className="p-2 rounded-full bg-blue-50/80 text-blue-500 hover:bg-blue-100"><i className="ph ph-arrows-clockwise text-xl"></i></button>
-                        </div>
-                    </div>
-                    <div className="p-4 space-y-6 animate-slide-in">
-                        <div className="text-center my-2 glass-card p-3 rounded-xl inline-block w-full"><h3 className="text-lg font-telugu font-bold text-slate-800 leading-snug">{lessonData.teluguTitle}</h3></div>
-                        {lessonData.concepts.map((c, i) => (
-                            <div key={i} className="glass-card p-5 rounded-3xl">
-                                <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2 text-sm uppercase tracking-wide"><i className="ph ph-sparkle text-yellow-500 drop-shadow-sm"></i> {c.title}</h3>
-                                <div className="bg-white/60 p-4 rounded-xl mb-4 relative group border border-white/50 shadow-inner">
-                                    <p className="text-slate-800 text-sm font-telugu leading-relaxed pr-8 font-medium">{c.explanation}</p>
-                                    <button onClick={() => speak(c.explanation, 'te')} className="absolute top-3 right-3 text-slate-400 hover:text-blue-600 bg-white/80 p-1.5 rounded-full shadow-sm"><i className="ph ph-speaker-high"></i></button>
-                                </div>
-                                <div className="space-y-3">
-                                    {c.examples.map((ex, j) => (
-                                        <div key={j} className={`border-l-4 pl-4 py-2 ${prefLang === 'en' ? 'border-blue-500' : 'border-orange-500'} bg-white/40 rounded-r-xl backdrop-blur-sm`}>
-                                            <div className="flex justify-between items-start mb-1">
-                                                <span className="text-xs text-slate-600 font-telugu font-semibold">{ex.te}</span>
-                                                <button onClick={() => speak(ex.te, 'te')} className="text-gray-400 hover:text-gray-700"><i className="ph ph-speaker-simple-high text-xs"></i></button>
-                                            </div>
-                                            {prefLang === 'en' ? (
-                                                <div className="flex justify-between items-center">
-                                                    <span className="font-bold text-blue-800 text-sm">{ex.en}</span>
-                                                    <button onClick={() => speak(ex.en, 'en')} className="text-blue-400 hover:text-blue-700"><i className="ph ph-speaker-high"></i></button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex justify-between items-center">
-                                                    <span className="font-bold text-orange-800 text-sm">{ex.hi}</span>
-                                                    <button onClick={() => speak(ex.hi, 'hi')} className="text-orange-400 hover:text-orange-700"><i className="ph ph-speaker-high"></i></button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="fixed bottom-0 left-0 right-0 p-4 glass-panel border-t-0 flex justify-center z-20"><button onClick={() => { setQuizState({ index: 0, score: 0, answered: false, selected: null, isCorrect: false, history: [] }); setView('quiz'); }} className={`w-full max-w-md text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 flex items-center justify-center gap-2 ${prefLang === 'en' ? 'bg-blue-600/90 hover:bg-blue-600' : 'bg-orange-600/90 hover:bg-orange-600'} backdrop-blur-md`}>
-                            Start Quiz ({prefQCount} Qs) <i className="ph ph-caret-right"></i>
-                        </button>
-                    </div>
-                </div>
-            );
-
-            if (view === 'quiz') {
-                const currentQuiz = prefLang === 'en' ? lessonData.quizEnglish : lessonData.quizHindi;
-                const q = currentQuiz[quizState.index];
-                const color = prefLang === 'en' ? 'blue' : 'orange';
-                if (!q) { setTimeout(() => setView('result'), 100); return null; }
-
-                return (
-                    <div className={`min-h-screen flex flex-col relative`}>
-                         <div className={`absolute inset-0 bg-${color}-500/10 backdrop-blur-sm pointer-events-none`}></div>
-                        <div className="p-6 flex justify-between items-center relative z-10">
-                            <button onClick={() => setView('lesson')} className={`p-2 rounded-full glass-card text-${color}-700`}><i className="ph ph-x"></i></button>
-                            <div className={`px-3 py-1 rounded-full glass-card text-${color}-800 text-xs font-bold`}>Q {quizState.index + 1} / {currentQuiz.length}</div>
-                            <button onClick={stopAudio} className={`text-${color}-700 p-2 glass-card rounded-full`}><i className="ph ph-speaker-slash text-xl"></i></button>
-                        </div>
-                        <div className="flex-1 px-6 flex flex-col justify-center pb-20 relative z-10">
-                            <div className="glass-panel p-8 rounded-3xl mb-6 text-center relative">
-                                <h2 className="text-xl font-bold text-slate-800 font-telugu leading-relaxed">{q.question}</h2>
-                                <button onClick={() => speak(q.question, 'te')} className="absolute top-4 right-4 text-gray-400 hover:text-blue-600"><i className="ph ph-speaker-high"></i></button>
-                            </div>
-                            <div className="space-y-3">
-                                {q.options.map((opt, idx) => {
-                                    let style = "glass-card text-slate-700 hover:bg-white/70";
-                                    if (quizState.answered) {
-                                        if (idx === q.correct) { style = "bg-green-500 text-white border-green-500 shadow-lg"; }
-                                        else if (idx === quizState.selected) { style = "bg-red-500 text-white border-red-500 shadow-lg"; }
-                                        else { style = "glass-card opacity-50"; }
-                                    }
-                                    return (
-                                        <button key={idx} onClick={() => { 
-                                            if(quizState.answered) return; 
-                                            const isCorrect = idx === q.correct;
-                                            const newHistory = [...quizState.history, { question: q.question, correctAns: q.options[q.correct], userAns: opt, isCorrect }];
-                                            setQuizState({ ...quizState, answered: true, selected: idx, isCorrect, score: isCorrect ? quizState.score + 1 : quizState.score, history: newHistory }); 
-                                        }} disabled={quizState.answered} className={`w-full p-4 rounded-xl border font-semibold transition-all flex justify-between items-center active:scale-98 ${style}`}>
-                                            <span>{opt}</span>
-                                        </button>
-                                    )
-                                })}
-                            </div>
-                            {quizState.answered && (
-                                <div className="mt-6 animate-slide-in">
-                                    <div className={`glass-panel p-4 rounded-2xl border-l-4 ${quizState.isCorrect ? 'border-green-500' : 'border-red-500'} mb-4 text-sm font-telugu text-slate-800 flex justify-between gap-2`}>
-                                        <span className="flex-1 leading-relaxed">{q.explanation}</span>
-                                        <button onClick={() => speak(q.explanation, 'te')} className="text-blue-600 shrink-0"><i className="ph ph-speaker-high"></i></button>
-                                    </div>
-                                    <button onClick={() => { if (quizState.index < currentQuiz.length - 1) setQuizState({ ...quizState, index: quizState.index + 1, answered: false, selected: null, isCorrect: false, history: quizState.history }); else setView('result'); }} className={`w-full bg-${color}-600 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 hover:bg-${color}-700 transition-colors`}>Next <i className="ph ph-arrow-right"></i></button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                );
-            }
-
-            if (view === 'result') {
-                const colorClass = prefLang === 'en' ? 'blue' : 'orange';
-                const total = prefLang === 'en' ? lessonData.quizEnglish.length : lessonData.quizHindi.length;
-                const percentage = Math.round((quizState.score / total) * 100);
-                const passed = percentage >= 70;
-                
-                return (
-                    <div className="min-h-screen p-6 pb-20 flex flex-col items-center justify-center">
-                         <div className="glass-panel w-full max-w-lg p-8 rounded-3xl text-center relative overflow-hidden">
-                             {passed && <div className="absolute inset-0 bg-yellow-400/10 z-0 animate-pulse"></div>}
-                            <div className="relative z-10">
-                                {passed ? <i className="ph ph-medal text-yellow-400 text-8xl mb-4 animate-bounce drop-shadow-md"></i> : <i className="ph ph-smiley-sad text-gray-400 text-8xl mb-4"></i>}
-                                <h2 className="text-3xl font-bold text-slate-800 mb-2">{passed ? "Excellent!" : "Keep Trying"}</h2>
-                                <p className="text-slate-600 text-lg font-bold">{percentage}% Score</p>
-                                <p className="text-sm text-slate-500 mb-6">{quizState.score} out of {total} Correct</p>
-                            </div>
-                            
-                            <div className="bg-white/50 rounded-2xl p-4 mb-6 text-left max-h-60 overflow-y-auto no-scrollbar">
-                                <h3 className="font-bold text-slate-700 mb-3 text-sm uppercase sticky top-0 bg-white/80 p-2 rounded-lg backdrop-blur-sm">Review Answers</h3>
-                                <div className="space-y-3">
-                                    {quizState.history.length === 0 ? <p className="text-sm text-gray-500">No questions answered yet.</p> : 
-                                        quizState.history.map((item, i) => (
-                                        <div key={i} className={`flex gap-3 items-start text-sm border-b border-gray-300/50 pb-2 last:border-0 ${item.isCorrect ? 'opacity-60' : ''}`}>
-                                            {item.isCorrect ? <i className="ph ph-check-circle text-green-600 text-lg shrink-0"></i> : <i className="ph ph-x-circle text-red-500 text-lg shrink-0"></i>}
-                                            <div>
-                                                <p className="font-telugu text-slate-800 font-medium">{item.question}</p>
-                                                {!item.isCorrect && <p className="text-xs mt-1"><span className="text-red-600 line-through mr-2">{item.userAns}</span><span className="text-green-700 font-bold">{item.correctAns}</span></p>}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-    
-                            <div className="flex gap-3 justify-center z-10">
-                                <button onClick={() => { setView('lesson'); }} className="flex-1 bg-gray-100/80 hover:bg-white text-slate-700 font-bold py-3 px-6 rounded-xl backdrop-blur-md transition-all">Retry</button>
-                                {passed ? (
-                                    <button onClick={() => setView('course_list')} className="flex-[2] bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-green-700 transition-all">Next Class <i className="ph ph-lock-open"></i></button>
-                                ) : (
-                                    <button onClick={() => setView('course_list')} className="flex-[2] bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-700 transition-all">Course Menu</button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-            
-            if (view === 'roleplay_list') return (
-                <div className="min-h-screen p-4 pb-safe">
-                     <div className="glass-panel sticky top-4 z-20 py-2 px-3 rounded-xl mb-6 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <button onClick={() => setView('home')} className="text-gray-600 p-2 hover:bg-white/50 rounded-full"><i className="ph ph-arrow-left text-xl"></i></button>
-                            <h2 className="font-bold text-lg text-slate-800">Choose Scenario</h2>
-                        </div>
-                        <div className="flex bg-white/60 p-1 rounded-lg shadow-inner ml-auto border border-white/40">
-                            <button onClick={() => setChatLang('en')} className={`px-3 py-1 rounded text-xs font-bold transition-all ${chatLang === 'en' ? 'bg-blue-100/80 text-blue-600' : 'text-gray-500'}`}>ENG</button>
-                            <button onClick={() => setChatLang('hi')} className={`px-3 py-1 rounded text-xs font-bold transition-all ${chatLang === 'hi' ? 'bg-orange-100/80 text-orange-600' : 'text-gray-500'}`}>HIN</button>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        {SCENARIOS.map(s => (
-                            <button key={s.id} onClick={() => handleStartChat(s)} className="glass-card p-4 rounded-2xl text-center active:scale-95 transition-all hover:bg-white/80">
-                                <i className={`ph ${s.icon} text-3xl text-blue-600 mb-2 drop-shadow-sm`}></i>
-                                <h3 className="font-bold text-slate-700 text-xs leading-tight font-telugu">{s.title}</h3>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            );
-
-            if (view === 'chat') return (
-                <div className="min-h-screen flex flex-col relative">
-                     <div className="absolute inset-0 bg-indigo-500/5 pointer-events-none backdrop-blur-sm"></div>
-                    <div className="glass-panel p-3 flex items-center gap-3 z-20 justify-between rounded-b-2xl shadow-md">
-                        <div className="flex items-center gap-3">
-                             <button onClick={() => setView('roleplay_list')} className="text-gray-600 p-1"><i className="ph ph-arrow-left text-xl"></i></button>
-                             <div><h2 className="font-bold text-slate-800 text-sm font-telugu">{activeScenario.title}</h2><p className="text-[10px] text-slate-500 font-bold uppercase">{chatLang === 'en' ? 'English' : 'Hindi'} Mode</p></div>
-                        </div>
-                        <button onClick={stopAudio} className="text-red-500 p-2 bg-red-50/50 rounded-full hover:bg-red-100"><i className="ph ph-speaker-slash text-xl"></i></button>
-                    </div>
-                    <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-6 relative z-10">
-                        {messages.map((m, i) => (
-                            <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-                                <div className={`max-w-[85%] p-3.5 text-sm relative group shadow-md backdrop-blur-md ${m.role === 'user' ? 'bubble-user' : 'glass-bubble-ai'}`}>{m.text}{m.role === 'ai' && <button onClick={() => speak(m.text, chatLang)} className="absolute -right-8 top-1 text-gray-500 hover:text-blue-600 p-1 bg-white/60 rounded-full shadow-sm"><i className="ph ph-speaker-high text-base"></i></button>}</div>
-                                {m.role === 'ai' && (
-                                    <div className="max-w-[85%] mt-1 space-y-1">
-                                        <div className="text-xs text-slate-600 font-telugu bg-white/60 px-2 py-1 rounded-md border border-white/50 shadow-sm backdrop-blur-md">
-                                            {m.translation}
-                                        </div>
-                                        {m.feedback && (
-                                            <div className="feedback-box p-3 rounded-xl text-xs font-telugu shadow-sm mt-2">
-                                                <strong className="block mb-1 flex items-center gap-1 text-amber-800"><i className="ph ph-warning-circle"></i> సవరణ (Correction):</strong>
-                                                {m.feedback}
-                                                <button onClick={() => speak(m.feedback, 'te')} className="ml-2 text-amber-700 hover:text-amber-900"><i className="ph ph-speaker-high"></i></button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                        {loading && <div className="flex justify-start"><div className="glass-card p-3 rounded-xl rounded-bl-none flex gap-1 shadow-sm"><div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce"></div><div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce delay-75"></div><div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce delay-150"></div></div></div>}
-                    </div>
-                    <div className="glass-panel p-3 border-t border-white/30 flex items-center gap-2 z-20">
-                        <button onClick={startListening} disabled={waitTime > 0 || loading} className={`p-3 rounded-full transition-all flex-shrink-0 shadow-sm border border-white/50 ${isRecording ? 'bg-red-500 text-white animate-pulse-ring' : 'bg-white/60 text-gray-600 hover:bg-white'}`}><i className={`ph ${isRecording ? 'ph-microphone-slash' : 'ph-microphone'} text-xl`}></i></button>
-                        <input type="text" value={inputObj} onChange={(e) => setInputObj(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendChat()} placeholder={waitTime > 0 ? `Wait ${waitTime}s...` : isRecording ? "Listening..." : "Type message..."} className="flex-1 glass-input border-transparent rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 placeholder-slate-500 text-slate-800" disabled={waitTime > 0 || loading} />
-                        <button onClick={handleSendChat} disabled={!inputObj.trim() || waitTime > 0 || loading} className={`p-3 rounded-full flex-shrink-0 shadow-lg border border-white/20 ${!inputObj.trim() || waitTime > 0 ? 'bg-gray-200/50 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-90'} transition-all`}><i className="ph ph-paper-plane-right text-xl"></i></button>
-                    </div>
-                </div>
-            );
-
-            return null;
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-
-        // --- PWA SERVICE WORKER REGISTRATION (CORRECTED) ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                // using ./service-worker.js is usually correct for GitHub pages if the file is in root
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(reg => console.log('Service Worker Registered!', reg.scope))
-                    .catch(err => console.log('Service Worker Failed:', err));
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+                return { ...q, options: shuffledOptions, correct: newCorrectIndex };
             });
-        }
-    </script>
-</body>
-</html>
+        };
+
+        const generateLessonContent = async (apiKey, modelId, lessonInfo, qCount, prefLang, onWait) => {
+            await checkRateLimit(onWait); 
+            
+            let prompt = "";
+            let conceptsFormat = "";
+            let quizFormat = "";
+
+            if (prefLang === 'en') {
+                conceptsFormat = `"concepts": [{"title": "Concept Name", "explanation": "Concise Telugu explanation...", "examples": [{"te": "...", "en": "..."}, {"te": "...", "en": "..."}]}]`;
+                
