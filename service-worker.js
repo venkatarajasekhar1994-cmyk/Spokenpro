@@ -1,5 +1,6 @@
-const CACHE_NAME = 'speakpro-v2';
-const ASSETS = [
+const CACHE_NAME = 'speakpro-glass-v2';
+const ASSETS_TO_CACHE = [
+  './',
   './index.html',
   './manifest.json',
   './1000094592.jpg',
@@ -11,10 +12,39 @@ const ASSETS = [
   'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Ramabhadra&display=swap'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+// Install Event
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); // Force activation
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Opened cache');
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
+  );
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
+// Fetch Event
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
+});
+
+// Activate Event
+self.addEventListener('activate', (event) => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  return self.clients.claim();
 });
