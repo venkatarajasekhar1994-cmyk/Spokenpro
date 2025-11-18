@@ -1,4 +1,4 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,6 +13,21 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- FIX 1: Tailwind CDN ను 'class' డార్క్ మోడ్ కోసం కాన్ఫిగర్ చేయండి -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // ఇది థీమ్ స్విచ్చర్‌ను సరిగ్గా పనిచేయిస్తుంది
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'open-sans': ['"Open Sans"', 'sans-serif'],
+                        'ramabhadra': ['"Ramabhadra"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Ramabhadra&display=swap" rel="stylesheet">
@@ -25,6 +40,8 @@
             min-height: 100vh;
             -webkit-tap-highlight-color: transparent; 
             transition: background-color 0.3s ease;
+            /* FIX 3: లైట్ మోడ్ కోసం డిఫాల్ట్ టెక్స్ట్ రంగును సెట్ చేయండి */
+            color: #020617; /* slate-950 */
         }
 
         /* Glass Utility Classes */
@@ -32,7 +49,7 @@
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 0.5);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
         .glass-card {
@@ -81,6 +98,8 @@
         /* --- DARK MODE STYLES --- */
         .dark body {
             background-color: #0f172a; /* slate-900 */
+            /* FIX 3: డార్క్ మోడ్ కోసం డిఫాల్ట్ టెక్స్ట్ రంగును సెట్ చేయండి */
+            color: #f1f5f9; /* slate-100 */
         }
         .dark .glass-panel {
             background: rgba(26, 38, 58, 0.75); /* slate-800/75 */
@@ -125,9 +144,10 @@
                     return (
                         <div style={{ padding: '20px', height: '100vh', overflowY: 'auto' }} className="bg-white text-red-700 dark:bg-slate-900 dark:text-red-400">
                             <h1 className="text-xl font-bold">App Error (యాప్‌లో లోపం)</h1>
-                            {/* FIX: Darker text */ }
-                            <p className="mt-2 text-black dark:text-slate-200">దయచేసి రీలోడ్ చేయండి. లోపం కొనసాగితే, దయచేసి API కీని తనిఖీ చేయండి.</p>
-                            <pre style={{ color: 'black', background: '#f3f4f6', padding: '10px', borderRadius: '5px', marginTop: '15px', whiteSpace: 'pre-wrap', wordWrap: 'break-word', border: '1px solid #e5e7eb' }} className="text-black bg-slate-100 dark:text-slate-200 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                            {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                            <p className="mt-2">దయచేసి రీలోడ్ చేయండి. లోపం కొనసాగితే, దయచేసి API కీని తనిఖీ చేయండి.</p>
+                            {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                            <pre style={{ color: 'inherit', background: '#f3f4f6', padding: '10px', borderRadius: '5px', marginTop: '15px', whiteSpace: 'pre-wrap', wordWrap: 'break-word', border: '1px solid #e5e7eb' }} className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                                 <strong>Error: {this.state.error && this.state.error.toString()}</strong>
                             </pre>
                             <button onClick={() => window.location.reload()} className="mt-4 bg-blue-600 text-white p-2 rounded">Reload App</button>
@@ -548,6 +568,13 @@
                 rec.start();
             };
 
+            // FIX 2: యూనివర్సల్ మ్యూట్ బటన్ కాంపోనెంట్
+            const MuteButton = () => (
+                <button onClick={() => setIsMuted(!isMuted)} className={`glass-card p-2.5 rounded-full hover:bg-white active:scale-95 transition-all ${isMuted ? 'text-red-500' : 'text-blue-600'}`}>
+                    <i className={`ph ${isMuted ? 'ph-speaker-slash' : 'ph-speaker-high'} text-xl`}></i>
+                </button>
+            );
+
             // --- VIEWS ---
 
             if (loading && view !== 'chat' && !error) {
@@ -555,8 +582,8 @@
                     // waitTime లాజిక్ మళ్లీ జోడించబడింది
                     <div className="h-screen flex flex-col items-center justify-center glass-panel p-6 text-center">
                         {waitTime > 0 ? <div className="text-4xl font-bold text-blue-600 mb-2">{waitTime}s</div> : <i className="ph ph-spinner text-4xl text-blue-600 animate-spin-slow mb-4"></i>}
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        <p className="text-black text-sm font-semibold dark:text-gray-300">{waitTime > 0 ? "Safety Wait..." : "Generating Content..."}</p>
+                        {/* FIX 3: text-black మరియు dark:text-gray-300 తీసివేయబడింది */}
+                        <p className="text-sm font-semibold">{waitTime > 0 ? "Safety Wait..." : "Generating Content..."}</p>
                     </div>
                 );
             }
@@ -565,12 +592,12 @@
                 return (
                     <div className="h-screen flex flex-col items-center justify-center glass-panel p-6 text-center">
                         <i className="ph ph-warning text-4xl text-red-500 mb-4"></i>
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        <p className="text-black text-sm font-semibold mb-3 dark:text-gray-300">An Error Occurred</p>
+                        {/* FIX 3: text-black మరియు dark:text-gray-300 తీసివేయబడింది */}
+                        <p className="text-sm font-semibold mb-3">An Error Occurred</p>
                         <div className="text-red-500 text-xs bg-red-50 p-3 rounded-lg shadow-sm w-full max-w-xs dark:bg-red-900/50 dark:text-red-400">{error}</div>
                         <button onClick={() => { setError(null); setView(view === 'home' ? 'home' : 'course_list'); }} className="mt-6 bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg">Go Back</button>
-                        {/* API Key ఎర్రర్ బటన్ మళ్లీ జోడించబడింది */}
-                        {error.includes("API Key") && <button onClick={() => { setError(null); setShowSettings(true); }} className="mt-4 text-sm text-black underline dark:text-gray-400">Open Settings</button>}
+                        {/* FIX 3: text-black మరియు dark:text-gray-400 తీసివేయబడింది */}
+                        {error.includes("API Key") && <button onClick={() => { setError(null); setShowSettings(true); }} className="mt-4 text-sm underline">Open Settings</button>}
                     </div>
                 );
             }
@@ -580,44 +607,45 @@
                 <div className="min-h-screen p-4 pb-10 relative">
                     {/* FIX 1: Removed usage bar */}
                     <div className="flex justify-between items-center mb-8 relative z-10 pt-4"> {/* Added pt-4 for spacing */ }
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        <h1 className="text-2xl font-bold text-black flex items-center gap-2 drop-shadow-sm dark:text-slate-200"><i className="ph ph-student text-blue-600 bg-white/50 p-1 rounded-lg"></i> SpeakPro</h1>
+                        {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                        <h1 className="text-2xl font-bold flex items-center gap-2 drop-shadow-sm"><i className="ph ph-student text-blue-600 bg-white/50 p-1 rounded-lg"></i> SpeakPro</h1>
                         <div className="flex gap-3">
-                             <button onClick={() => setIsMuted(!isMuted)} className={`glass-card p-2.5 rounded-full hover:bg-white active:scale-95 transition-all ${isMuted ? 'text-red-500' : 'text-blue-600'}`}><i className={`ph ${isMuted ? 'ph-speaker-slash' : 'ph-speaker-high'} text-xl`}></i></button>
+                             {/* FIX 2: పాత మ్యూట్ బటన్‌ను కొత్త కాంపోనెంట్‌తో భర్తీ చేయండి */}
+                             <MuteButton />
                              {installPrompt && (
                                 <button onClick={handleInstallClick} className="glass-card p-2.5 rounded-full text-green-600 hover:bg-white active:scale-95 transition-all animate-pulse">
                                     <i className="ph ph-download-simple text-xl"></i>
                                 </button>
                              )}
-                             {/* apiKey మీద ఆధారపడిన క్లాస్ మళ్లీ జోడించబడింది */}
-                             <button onClick={() => setShowSettings(true)} className={`glass-card p-2.5 rounded-full hover:bg-white active:scale-95 transition-all ${apiKey ? 'text-black dark:text-gray-300' : 'text-amber-600 animate-bounce'}`}><i className="ph ph-gear text-xl"></i></button>
+                             {/* FIX 3: text-black మరియు dark:text-gray-300 తీసివేయబడింది (logic залишено) */}
+                             <button onClick={() => setShowSettings(true)} className={`glass-card p-2.5 rounded-full hover:bg-white active:scale-95 transition-all ${apiKey ? '' : 'text-amber-600 animate-bounce'}`}><i className="ph ph-gear text-xl"></i></button>
                         </div>
                     </div>
                     {showSettings && (
                         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-slide-in">
                             <div className="glass-panel p-6 rounded-2xl w-full max-w-sm relative">
                                 <button onClick={() => setShowSettings(false)} className="absolute top-3 right-3 text-gray-500 dark:text-gray-400"><i className="ph ph-x text-lg"></i></button>
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <h3 className="font-bold text-lg mb-4 text-black dark:text-slate-200">Settings</h3>
-                                {/* API Key ఇన్‌పుట్ మళ్లీ జోడించబడింది */}
+                                {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                <h3 className="font-bold text-lg mb-4">Settings</h3>
+                                {/* FIX 3: text-black залишено, ఇది input కోసం అవసరం */}
                                 <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Paste API Key" className="glass-input w-full p-3 rounded-xl text-sm mb-3 text-black outline-none focus:ring-2 focus:ring-blue-400 dark:text-white dark:placeholder-slate-400" />
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
+                                {/* FIX 3: text-black залишено, ఇది input కోసం అవసరం */}
                                 <input type="text" value={modelId} onChange={e => setModelId(e.target.value)} placeholder="Model Name" className="glass-input w-full p-3 rounded-xl text-sm mb-4 text-black outline-none focus:ring-2 focus:ring-blue-400 dark:text-white dark:placeholder-slate-400" />
                                 
                                 <div className="mb-4">
-                                    {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                    <label className="block text-sm font-medium text-black mb-2 dark:text-slate-300">Theme</label>
+                                    {/* FIX 3: text-black మరియు dark:text-slate-300 తీసివేయబడింది */}
+                                    <label className="block text-sm font-medium mb-2">Theme</label>
                                     <div className="flex w-full bg-white/60 dark:bg-slate-700/60 p-1 rounded-xl shadow-inner border border-white/40 dark:border-slate-700">
-                                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                        <button onClick={() => setTheme('light')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'light' ? 'bg-white text-blue-600 shadow' : 'text-black dark:text-slate-400'}`}>
+                                        {/* FIX 3: text-black మరియు dark:text-slate-400 (unselected) తీసివేయబడింది */}
+                                        <button onClick={() => setTheme('light')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'light' ? 'bg-white text-blue-600 shadow' : ''}`}>
                                             <i className="ph ph-sun"></i> Light
                                         </button>
-                                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                        <button onClick={() => setTheme('dark')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'dark' ? 'bg-slate-900 text-white shadow' : 'text-black dark:text-slate-400'}`}>
+                                        {/* FIX 3: text-black మరియు dark:text-slate-400 (unselected) తీసివేయబడింది */}
+                                        <button onClick={() => setTheme('dark')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'dark' ? 'bg-slate-900 text-white shadow' : ''}`}>
                                             <i className="ph ph-moon"></i> Dark
                                         </button>
-                                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                        <button onClick={() => setTheme('system')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'system' ? 'bg-white text-blue-600 shadow dark:bg-slate-600 dark:text-white' : 'text-black dark:text-slate-400'}`}>
+                                        {/* FIX 3: text-black మరియు dark:text-slate-400 (unselected) తీసివేయబడింది */}
+                                        <button onClick={() => setTheme('system')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'system' ? 'bg-white text-blue-600 shadow dark:bg-slate-600 dark:text-white' : ''}`}>
                                             <i className="ph ph-gear-six"></i> System
                                         </button>
                                     </div>
@@ -631,18 +659,18 @@
                         <button onClick={() => setView('course_list')} className="glass-card p-6 rounded-3xl text-left relative overflow-hidden group active:scale-95 transition-transform hover:bg-white/80">
                              <div className="absolute top-0 right-0 bg-blue-500 w-24 h-24 rounded-bl-full -mr-10 -mt-10 opacity-20"></div>
                              <i className="ph ph-book-open text-4xl text-blue-700 mb-3 drop-shadow-sm"></i>
-                             {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                             <h2 className="text-xl font-bold text-black dark:text-slate-200">45-Day Course</h2>
-                             {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                             <p className="text-black text-sm mt-1 font-medium dark:text-slate-400">Grammar & Quizzes</p>
+                             {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                             <h2 className="text-xl font-bold">45-Day Course</h2>
+                             {/* FIX 3: text-black మరియు dark:text-slate-400 తీసివేయబడింది */}
+                             <p className="text-sm mt-1 font-medium">Grammar & Quizzes</p>
                         </button>
                         <button onClick={() => setView('roleplay_list')} className="glass-card p-6 rounded-3xl text-left relative overflow-hidden group active:scale-95 transition-transform hover:bg-white/80">
                              <div className="absolute top-0 right-0 bg-emerald-500 w-24 h-24 rounded-bl-full -mr-10 -mt-10 opacity-20"></div>
                              <i className="ph ph-chats-circle text-4xl text-emerald-700 mb-3 drop-shadow-sm"></i>
-                             {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                             <h2 className="text-xl font-bold text-black dark:text-slate-200">Role Play</h2>
-                             {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                             <p className="text-black text-sm mt-1 font-medium dark:text-slate-400">Real Conversations</p>
+                             {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                             <h2 className="text-xl font-bold">Role Play</h2>
+                             {/* FIX 3: text-black మరియు dark:text-slate-400 తీసివేయబడింది */}
+                             <p className="text-sm mt-1 font-medium">Real Conversations</p>
                         </button>
                     </div>
                 </div>
@@ -651,22 +679,26 @@
             // 2. COURSE LIST
             if (view === 'course_list') return (
                 <div className="min-h-screen p-4 pb-10">
-                    <div className="glass-panel sticky top-4 p-3 rounded-xl mb-6 z-20 flex items-center gap-4">
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        <button onClick={() => setView('home')} className="text-black p-2 hover:bg-white/50 rounded-full dark:text-gray-300"><i className="ph ph-arrow-left text-xl"></i></button>
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        <h2 className="font-bold text-lg text-black dark:text-slate-200">Select Class</h2>
+                    {/* FIX 2: justify-between మరియు MuteButton జోడించబడింది */}
+                    <div className="glass-panel sticky top-4 p-3 rounded-xl mb-6 z-20 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            {/* FIX 3: text-black మరియు dark:text-gray-300 తీసివేయబడింది */}
+                            <button onClick={() => setView('home')} className="p-2 hover:bg-white/50 rounded-full"><i className="ph ph-arrow-left text-xl"></i></button>
+                            {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                            <h2 className="font-bold text-lg">Select Class</h2>
+                        </div>
+                        <MuteButton />
                     </div>
                     <div className="glass-card p-4 rounded-2xl mb-4">
                         <div className="flex gap-2 mb-3">
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <button onClick={() => setPrefLang('en')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${prefLang === 'en' ? 'bg-blue-600 text-white' : 'bg-white/60 text-black dark:bg-slate-700/60 dark:text-slate-300'}`}>English</button>
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <button onClick={() => setPrefLang('hi')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${prefLang === 'hi' ? 'bg-orange-600 text-white' : 'bg-white/60 text-black dark:bg-slate-700/60 dark:text-slate-300'}`}>Hindi</button>
+                            {/* FIX 3: text-black మరియు dark:text-slate-300 (unselected) తీసివేయబడింది */}
+                            <button onClick={() => setPrefLang('en')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${prefLang === 'en' ? 'bg-blue-600 text-white' : 'bg-white/60 dark:bg-slate-700/60'}`}>English</button>
+                            {/* FIX 3: text-black మరియు dark:text-slate-300 (unselected) తీసివేయబడింది */}
+                            <button onClick={() => setPrefLang('hi')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${prefLang === 'hi' ? 'bg-orange-600 text-white' : 'bg-white/60 dark:bg-slate-700/60'}`}>Hindi</button>
                         </div>
                         <div className="flex gap-2">
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            {[3, 5, 10].map(n => <button key={n} onClick={() => setPrefQCount(n)} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm ${prefQCount === n ? 'bg-slate-800 text-white dark:bg-blue-500' : 'bg-white/60 text-black dark:bg-slate-700/60 dark:text-slate-300'}`}>{n} Qs</button>)}
+                            {/* FIX 3: text-black మరియు dark:text-slate-300 (unselected) తీసివేయబడింది */}
+                            {[3, 5, 10].map(n => <button key={n} onClick={() => setPrefQCount(n)} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm ${prefQCount === n ? 'bg-slate-800 text-white dark:bg-blue-500' : 'bg-white/60 dark:bg-slate-700/60'}`}>{n} Qs</button>)}
                         </div>
                     </div>
                     <div className="space-y-3">
@@ -674,11 +706,11 @@
                             <button key={l.id} onClick={() => handleStartLesson(l)} className="w-full glass-card p-4 rounded-2xl flex items-center justify-between active:scale-95 transition-all hover:bg-white/80">
                                 <div className="text-left">
                                     <span className="text-[10px] bg-blue-100/80 text-blue-700 px-2 py-1 rounded font-bold backdrop-blur-sm dark:bg-blue-900/80 dark:text-blue-200">Class {l.id}</span>
-                                    {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                    <h3 className="font-bold text-black text-sm mt-1 dark:text-slate-200">{l.title.split(':')[1]}</h3>
+                                    {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                    <h3 className="font-bold text-sm mt-1">{l.title.split(':')[1]}</h3>
                                 </div>
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <i className="ph ph-caret-right text-black dark:text-gray-400"></i>
+                                {/* FIX 3: text-black మరియు dark:text-gray-400 తీసివేయబడింది */}
+                                <i className="ph ph-caret-right"></i>
                             </button>
                         ))}
                     </div>
@@ -690,32 +722,34 @@
                 if (!lessonData || !lessonData.concepts) return null; 
                 return (
                 <div className="min-h-screen pb-24">
-                    <div className="glass-panel sticky top-0 z-20 p-4 flex justify-between items-center border-b-0 shadow-lg backdrop-blur-xl">
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        <button onClick={() => setView('course_list')} className="text-black p-2 hover:bg-white/50 rounded-full dark:text-gray-300"><i className="ph ph-arrow-left text-xl"></i></button>
+                    {/* FIX 2: MuteButton మరియు gap-2 జోడించబడింది */}
+                    <div className="glass-panel sticky top-0 z-20 p-4 flex justify-between items-center border-b-0 shadow-lg backdrop-blur-xl gap-2">
+                        {/* FIX 3: text-black మరియు dark:text-gray-300 తీసివేయబడింది */}
+                        <button onClick={() => setView('course_list')} className="p-2 hover:bg-white/50 rounded-full"><i className="ph ph-arrow-left text-xl"></i></button>
                         <span className={`text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm ${prefLang === 'en' ? 'bg-blue-100/80 text-blue-800 dark:bg-blue-900/80 dark:text-blue-200' : 'bg-orange-100/80 text-orange-800 dark:bg-orange-900/80 dark:text-orange-200'}`}>{prefLang === 'en' ? 'English' : 'Hindi'} Mode</span>
                         <button onClick={() => { if(confirm('Refresh? This will use API quota.')) handleStartLesson(selectedLesson, true); }} className="p-2 rounded-full bg-blue-50/80 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/80 dark:text-blue-300 dark:hover:bg-blue-800"><i className="ph ph-arrows-clockwise text-xl"></i></button>
+                        <MuteButton />
                     </div>
                     <div className="p-4 space-y-6 animate-slide-in">
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        <div className="text-center my-2 glass-card p-3 rounded-xl inline-block w-full"><h3 className="text-lg font-telugu font-bold text-black leading-snug dark:text-slate-200">{lessonData.teluguTitle}</h3></div>
+                        {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                        <div className="text-center my-2 glass-card p-3 rounded-xl inline-block w-full"><h3 className="text-lg font-telugu font-bold leading-snug">{lessonData.teluguTitle}</h3></div>
                         {lessonData.concepts.map((c, i) => (
                             <div key={i} className="glass-card p-5 rounded-3xl">
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <h3 className="font-bold text-black mb-3 flex items-center gap-2 text-sm uppercase tracking-wide dark:text-slate-200"><i className="ph ph-sparkle text-yellow-500 drop-shadow-sm"></i> {c.title}</h3>
+                                {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                <h3 className="font-bold mb-3 flex items-center gap-2 text-sm uppercase tracking-wide"><i className="ph ph-sparkle text-yellow-500 drop-shadow-sm"></i> {c.title}</h3>
                                 <div className="bg-white/60 p-4 rounded-xl mb-4 relative group border border-white/50 shadow-inner dark:bg-slate-800/60">
-                                    {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                    <p className="text-black text-sm font-telugu leading-relaxed pr-8 font-medium dark:text-slate-200">{c.explanation}</p>
-                                    {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-gray-900) */}
+                                    {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                    <p className="text-sm font-telugu leading-relaxed pr-8 font-medium">{c.explanation}</p>
+                                    {/* FIX 3: text-gray-900... залишено, ఇది భిన్నమైన రంగు */}
                                     <button onClick={() => speak(c.explanation, 'te')} className="absolute top-3 right-3 text-gray-900 hover:text-blue-600 bg-white/80 dark:bg-slate-600/50 dark:text-slate-400 dark:hover:text-blue-400 p-1.5 rounded-full shadow-sm"><i className="ph ph-speaker-high"></i></button>
                                 </div>
                                 <div className="space-y-3">
                                     {c.examples.map((ex, j) => (
                                         <div key={j} className={`border-l-4 pl-4 py-2 ${prefLang === 'en' ? 'border-blue-500' : 'border-orange-500'} bg-white/40 rounded-r-xl backdrop-blur-sm dark:bg-slate-700/30`}>
                                             <div className="flex justify-between items-start mb-1">
-                                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                                <span className="text-xs text-black font-telugu font-semibold dark:text-slate-400">{ex.te}</span>
-                                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-gray-900) */}
+                                                {/* FIX 3: text-black మరియు dark:text-slate-400 తీసివేయబడింది */}
+                                                <span className="text-xs font-telugu font-semibold">{ex.te}</span>
+                                                {/* FIX 3: text-gray-900... залишено */}
                                                 <button onClick={() => speak(ex.te, 'te')} className="text-gray-900 hover:text-black dark:text-gray-500 dark:hover:text-gray-300"><i className="ph ph-speaker-simple-high text-xs"></i></button>
                                             </div>
                                             <div className="flex flex-col gap-1 mt-1">
@@ -763,21 +797,22 @@
                          <div className={`absolute inset-0 bg-${color}-500/10 backdrop-blur-sm pointer-events-none`}></div>
                         <div className="p-6 flex justify-between items-center relative z-10">
                             <button onClick={() => setView('lesson')} className={`p-2 rounded-full glass-card text-${color}-700 dark:text-${color}-300`}><i className="ph ph-x"></i></button>
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <div className={`px-3 py-1 rounded-full glass-card text-black dark:text-${color}-200 text-xs font-bold`}>Q {quizState.index + 1} / {currentQuiz.length}</div>
-                            <div className="w-10 h-10"></div>
+                            {/* FIX 3: text-black మరియు dark:text-${color}-200 తీసివేయబడింది */}
+                            <div className={`px-3 py-1 rounded-full glass-card text-xs font-bold`}>Q {quizState.index + 1} / {currentQuiz.length}</div>
+                            {/* FIX 2: ఖాళీ div బదులుగా MuteButton */}
+                            <div className="w-10 h-10 flex items-center justify-center"><MuteButton /></div>
                         </div>
                         <div className="flex-1 px-6 flex flex-col justify-center pb-20 relative z-10">
                             <div className="glass-panel p-8 rounded-3xl mb-6 text-center relative">
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <h2 className="text-xl font-bold text-black font-telugu leading-relaxed dark:text-slate-200">{q.question}</h2>
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-gray-900) */}
+                                {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                <h2 className="text-xl font-bold font-telugu leading-relaxed">{q.question}</h2>
+                                {/* FIX 3: text-gray-900... залишено */}
                                 <button onClick={() => speak(q.question, 'te')} className="absolute top-4 right-4 text-gray-900 hover:text-blue-600 dark:text-gray-500 dark:hover:text-blue-400"><i className="ph ph-speaker-high"></i></button>
                             </div>
                             <div className="space-y-3">
                                 {q.options.map((opt, idx) => {
-                                    {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                    let style = "glass-card text-black hover:bg-white/70 dark:text-slate-200";
+                                    {/* FIX 3: text-black మరియు dark:text-slate-200 (unselected) తీసివేయబడింది */}
+                                    let style = "glass-card hover:bg-white/70";
                                     if (quizState.answered) {
                                         if (idx === q.correct) { style = "bg-green-500 text-white border-green-500 shadow-lg"; }
                                         else if (idx === quizState.selected) { style = "bg-red-500 text-white border-red-500 shadow-lg"; }
@@ -797,8 +832,8 @@
                             </div>
                             {quizState.answered && (
                                 <div className="mt-6 animate-slide-in">
-                                    {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                    <div className={`glass-panel p-4 rounded-2xl border-l-4 ${quizState.isCorrect ? 'border-green-500' : 'border-red-500'} mb-4 text-sm font-telugu text-black dark:text-slate-200 flex justify-between gap-2`}>
+                                    {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                    <div className={`glass-panel p-4 rounded-2xl border-l-4 ${quizState.isCorrect ? 'border-green-500' : 'border-red-500'} mb-4 text-sm font-telugu flex justify-between gap-2`}>
                                         <span className="flex-1 leading-relaxed">{q.explanation}</span>
                                         <button onClick={() => speak(q.explanation, 'te')} className="text-blue-600 shrink-0 dark:text-blue-400"><i className="ph ph-speaker-high"></i></button>
                                     </div>
@@ -820,10 +855,10 @@
                 if (total === 0) {
                      return (
                         <div className="h-screen p-4 flex flex-col items-center justify-center glass-panel">
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <h2 className="text-xl font-bold text-black mb-4 dark:text-slate-200">Quiz Complete</h2>
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <p className="text-black mb-6 dark:text-slate-400">No questions were found for this quiz.</p>
+                            {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                            <h2 className="text-xl font-bold mb-4">Quiz Complete</h2>
+                            {/* FIX 3: text-black మరియు dark:text-slate-400 తీసివేయబడింది */}
+                            <p className="mb-6">No questions were found for this quiz.</p>
                             <button onClick={() => setView('course_list')} className="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg">Back to Menu</button>
                         </div>
                      );
@@ -838,26 +873,26 @@
                              {passed && <div className="absolute inset-0 bg-yellow-400/10 z-0 pointer-events-none"></div>}
                             <div className="relative z-10 text-center p-6 border-b border-white/40 shrink-0">
                                 {passed ? <i className="ph ph-medal text-yellow-500 text-6xl mb-2 animate-bounce drop-shadow-md"></i> : <i className="ph ph-smiley-sad text-gray-400 dark:text-gray-400 text-6xl mb-2"></i>}
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <h2 className="text-2xl font-bold text-black dark:text-slate-200">{passed ? "Excellent!" : "Practice More"}</h2>
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <div className="mt-2 inline-block bg-white/60 px-4 py-1 rounded-full text-lg font-bold text-black shadow-sm dark:bg-slate-700 dark:text-slate-200">{percentage}% Score</div>
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <p className="text-xs text-black mt-1 dark:text-slate-400">{quizState.score} / {total} Correct</p>
+                                {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                <h2 className="text-2xl font-bold">{passed ? "Excellent!" : "Practice More"}</h2>
+                                {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                <div className="mt-2 inline-block bg-white/60 px-4 py-1 rounded-full text-lg font-bold shadow-sm dark:bg-slate-700">{percentage}% Score</div>
+                                {/* FIX 3: text-black మరియు dark:text-slate-400 తీసివేయబడింది */}
+                                <p className="text-xs mt-1">{quizState.score} / {total} Correct</p>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 bg-white/30 dark:bg-slate-800/30">
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <h3 className="font-bold text-black mb-3 text-xs uppercase tracking-wider opacity-70 dark:text-slate-300">Review Answers</h3>
+                                {/* FIX 3: text-black మరియు dark:text-slate-300 తీసివేయబడింది */}
+                                <h3 className="font-bold mb-3 text-xs uppercase tracking-wider opacity-70">Review Answers</h3>
                                 <div className="space-y-3">
                                     {quizState.history.map((item, i) => (
                                         <div key={i} className="bg-white/70 p-3 rounded-xl border border-white shadow-sm dark:bg-slate-700/70 dark:border-slate-700">
                                             <div className="flex justify-between mb-1">
-                                                 {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                                 <span className="text-xs font-bold text-black dark:text-gray-400">Q{i+1}</span>
+                                                 {/* FIX 3: text-black మరియు dark:text-gray-400 తీసివేయబడింది */}
+                                                 <span className="text-xs font-bold">Q{i+1}</span>
                                                  {item.isCorrect ? <i className="ph ph-check text-green-600"></i> : <i className="ph ph-x text-red-500"></i>}
                                             </div>
-                                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                            <p className="font-telugu text-black text-sm mb-2 font-medium dark:text-slate-200">{item.question}</p>
+                                            {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                                            <p className="font-telugu text-sm mb-2 font-medium">{item.question}</p>
                                             {!item.isCorrect && (
                                                 <div className="text-xs flex flex-col gap-1 bg-red-50 p-2 rounded-lg dark:bg-red-900/50">
                                                     <div className="text-red-600 line-through opacity-70 dark:text-red-400">{item.userAns}</div>
@@ -869,7 +904,7 @@
                                 </div>
                             </div>
                             <div className="p-4 border-t border-white/40 shrink-0 bg-white/40 backdrop-blur-md dark:bg-slate-800/40 dark:border-slate-700 flex gap-3">
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
+                                {/* FIX 3: text-black залишено, ఇది బటన్ */}
                                 <button onClick={() => setView('lesson')} className="flex-1 bg-white text-black font-bold py-3 px-4 rounded-xl shadow-sm hover:bg-gray-50 text-sm dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">Retry</button>
                                 {passed ? (
                                     <button onClick={() => {
@@ -894,26 +929,30 @@
             // 6. ROLE PLAY LIST
             if (view === 'roleplay_list') return (
                 <div className="min-h-screen p-4 pb-safe">
-                     <div className="glass-panel sticky top-4 z-20 py-2 px-3 rounded-xl mb-6 flex items-center justify-between">
+                     {/* FIX 2: MuteButton జోడించడానికి కుడి వైపున ఒక ర్యాపర్ జోడించబడింది */}
+                     <div className="glass-panel sticky top-4 z-20 py-2 px-3 rounded-xl mb-6 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <button onClick={() => setView('home')} className="text-black p-2 hover:bg-white/50 rounded-full dark:text-gray-300"><i className="ph ph-arrow-left text-xl"></i></button>
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <h2 className="font-bold text-lg text-black dark:text-slate-200">Choose Scenario</h2>
+                            {/* FIX 3: text-black మరియు dark:text-gray-300 తీసివేయబడింది */}
+                            <button onClick={() => setView('home')} className="p-2 hover:bg-white/50 rounded-full"><i className="ph ph-arrow-left text-xl"></i></button>
+                            {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
+                            <h2 className="font-bold text-lg">Choose Scenario</h2>
                         </div>
-                        <div className="flex bg-white/60 p-1 rounded-lg shadow-inner ml-auto border border-white/40 dark:bg-slate-700/60 dark:border-slate-700">
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <button onClick={() => setChatLang('en')} className={`px-3 py-1 rounded text-xs font-bold transition-all ${chatLang === 'en' ? 'bg-blue-100/80 text-blue-600 dark:bg-blue-900/80 dark:text-blue-200' : 'text-black dark:text-gray-400'}`}>ENG</button>
-                            {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                            <button onClick={() => setChatLang('hi')} className={`px-3 py-1 rounded text-xs font-bold transition-all ${chatLang === 'hi' ? 'bg-orange-100/80 text-orange-600 dark:bg-orange-900/80 dark:text-orange-200' : 'text-black dark:text-gray-400'}`}>HIN</button>
+                        <div className="flex items-center gap-2">
+                            <div className="flex bg-white/60 p-1 rounded-lg shadow-inner border border-white/40 dark:bg-slate-700/60 dark:border-slate-700">
+                                {/* FIX 3: text-black మరియు dark:text-gray-400 (unselected) తీసివేయబడింది */}
+                                <button onClick={() => setChatLang('en')} className={`px-3 py-1 rounded text-xs font-bold transition-all ${chatLang === 'en' ? 'bg-blue-100/80 text-blue-600 dark:bg-blue-900/80 dark:text-blue-200' : ''}`}>ENG</button>
+                                {/* FIX 3: text-black మరియు dark:text-gray-400 (unselected) తీసివేయబడింది */}
+                                <button onClick={() => setChatLang('hi')} className={`px-3 py-1 rounded text-xs font-bold transition-all ${chatLang === 'hi' ? 'bg-orange-100/80 text-orange-600 dark:bg-orange-900/80 dark:text-orange-200' : ''}`}>HIN</button>
+                            </div>
+                            <MuteButton />
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         {SCENARIOS.map(s => (
                             <button key={s.id} onClick={() => handleStartChat(s)} className="glass-card p-4 rounded-2xl text-center active:scale-95 transition-all hover:bg-white/80">
                                 <i className={`ph ${s.icon} text-3xl text-blue-600 mb-2 drop-shadow-sm`}></i>
-                                {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                <h3 className="font-bold text-black text-xs leading-tight font-telugu dark:text-slate-300">{s.title}</h3>
+                                {/* FIX 3: text-black మరియు dark:text-slate-300 తీసివేయబడింది */}
+                                <h3 className="font-bold text-xs leading-tight font-telugu">{s.title}</h3>
                             </button>
                         ))}
                     </div>
@@ -926,26 +965,28 @@
                 return (
                 <div className="min-h-screen flex flex-col relative">
                      <div className="absolute inset-0 bg-indigo-500/5 pointer-events-none backdrop-blur-sm"></div>
+                    {/* FIX 2: MuteButton జోడించబడింది */}
                     <div className="glass-panel p-3 flex items-center gap-3 z-20 justify-between rounded-b-2xl shadow-md">
                         <div className="flex items-center gap-3">
-                             {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                             <button onClick={() => setView('roleplay_list')} className="text-black p-1 dark:text-gray-300"><i className="ph ph-arrow-left text-xl"></i></button>
-                             {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                             <div><h2 className="font-bold text-black text-sm font-telugu dark:text-slate-200">{activeScenario.title}</h2><p className="text-[10px] text-black font-bold uppercase dark:text-slate-400">{chatLang === 'en' ? 'English' : 'Hindi'} Mode</p></div>
+                             {/* FIX 3: text-black మరియు dark:text-gray-300 తీసివేయబడింది */}
+                             <button onClick={() => setView('roleplay_list')} className="p-1"><i className="ph ph-arrow-left text-xl"></i></button>
+                             {/* FIX 3: text-black, dark:text-slate-200, dark:text-slate-400 తీసివేయబడింది */}
+                             <div><h2 className="font-bold text-sm font-telugu">{activeScenario.title}</h2><p className="text-[10px] font-bold uppercase">{chatLang === 'en' ? 'English' : 'Hindi'} Mode</p></div>
                         </div>
+                        <MuteButton />
                     </div>
                     <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-6 relative z-10">
                         {messages.map((m, i) => (
                             <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
                                 <div className={`max-w-[85%] p-3.5 text-sm relative group shadow-md backdrop-blur-md ${m.role === 'user' ? 'bubble-user' : 'glass-bubble-ai'}`}>
                                     {m.text}
-                                    {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
+                                    {/* FIX 3: text-black... залишено, ఇది భిన్నమైన రంగు */}
                                     {m.role === 'ai' && <button onClick={() => speak(m.text, chatLang)} className="absolute -right-8 top-1 text-black hover:text-blue-600 p-1 bg-white/60 rounded-full shadow-sm dark:text-gray-400 dark:bg-slate-700/60 dark:hover:text-blue-400"><i className="ph ph-speaker-high text-base"></i></button>}
                                 </div>
                                 {m.role === 'ai' && (
                                     <div className="max-w-[85%] mt-1 space-y-1">
-                                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                                        <div className="text-xs text-black font-telugu bg-white/60 px-2 py-1 rounded-md border border-white/50 shadow-sm backdrop-blur-md dark:bg-slate-700/60 dark:text-slate-400 dark:border-slate-700">
+                                        {/* FIX 3: text-black మరియు dark:text-slate-400 తీసివేయబడింది */}
+                                        <div className="text-xs font-telugu bg-white/60 px-2 py-1 rounded-md border border-white/50 shadow-sm backdrop-blur-md dark:bg-slate-700/60 dark:border-slate-700">
                                             {m.translation}
                                         </div>
                                         {m.feedback && (
@@ -964,11 +1005,9 @@
                         {loading && <div className="flex justify-start"><div className="glass-card p-3 rounded-xl rounded-bl-none flex gap-1 shadow-sm"><div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce"></div><div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce delay-75"></div><div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce delay-150"></div></div></div>}
                     </div>
                     <div className="glass-panel p-3 border-t border-white/30 flex items-center gap-2 z-20">
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        {/* waitTime చెక్ మళ్లీ జోడించబడింది */}
-                        <button onClick={startListening} disabled={waitTime > 0 || loading} className={`p-3 rounded-full transition-all flex-shrink-0 shadow-sm border border-white/50 ${isRecording ? 'bg-red-500 text-white animate-pulse-ring' : 'bg-white/60 text-black hover:bg-white dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'}`}><i className={`ph ${isRecording ? 'ph-microphone-slash' : 'ph-microphone'} text-xl`}></i></button>
-                        {/* ఫాంట్ రంగు నలుపుగా ఉంది (text-black) */}
-                        {/* waitTime చెక్ మరియు ప్లేస్‌హోల్డర్ మళ్లీ జోడించబడింది */}
+                        {/* FIX 3: text-black... (unselected) తీసివేయబడింది */}
+                        <button onClick={startListening} disabled={waitTime > 0 || loading} className={`p-3 rounded-full transition-all flex-shrink-0 shadow-sm border border-white/50 ${isRecording ? 'bg-red-500 text-white animate-pulse-ring' : 'bg-white/60 hover:bg-white dark:bg-slate-700 dark:hover:bg-slate-600'}`}><i className={`ph ${isRecording ? 'ph-microphone-slash' : 'ph-microphone'} text-xl`}></i></button>
+                        {/* FIX 3: text-black... (input) залишено */}
                         <input type="text" value={inputObj} onChange={(e) => setInputObj(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendChat()} placeholder={waitTime > 0 ? `Wait ${waitTime}s...` : isRecording ? "Listening..." : "Type message..."} className="flex-1 glass-input border-transparent rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 placeholder-black text-black dark:placeholder-slate-400 dark:text-white" disabled={waitTime > 0 || loading} />
                         {/* waitTime చెక్ మళ్లీ జోడించబడింది */}
                         <button onClick={handleSendChat} disabled={!inputObj.trim() || waitTime > 0 || loading} className={`p-3 rounded-full flex-shrink-0 shadow-lg border border-white/20 ${!inputObj.trim() || waitTime > 0 || loading ? 'bg-gray-200/50 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-90'} transition-all`}><i className="ph ph-paper-plane-right text-xl"></i></button>
