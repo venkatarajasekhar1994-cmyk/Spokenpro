@@ -8,7 +8,7 @@
     <title>SpeakPro - Glass PWA</title>
     
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="1000094592.jpg">
+    <link rel="apple-touch-icon" href="logo.png">
 
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -437,6 +437,12 @@
             const [error, setError] = useState(null);
             const [isMuted, setIsMuted] = useState(false);
             const [installPrompt, setInstallPrompt] = useState(null);
+        const handleInstallClick = async () => {
+            if (!installPrompt) return;
+            const result = await installPrompt.prompt();
+            console.log(`Install prompt was: ${result.outcome}`);
+            setInstallPrompt(null);
+        };
             const [theme, setTheme] = useState(localStorage.getItem('speakpro_theme') || 'system');
             
             const chatContainerRef = useRef(null);
