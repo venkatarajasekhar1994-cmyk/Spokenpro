@@ -1006,50 +1006,47 @@ const HINDI_CURRICULUM = [
                 setShowSettings(false);
             };
 
-                                                            const handleStartLesson = async (lesson, forceRefresh = false) => {
-                // రీసెట్ చేస్తున్నాం
+                                                                        const handleStartLesson = async (lesson, forceRefresh = false) => {
+                // రీసెట్
                 setLessonData(null);
                 setSelectedLesson(lesson);
                 setLoading(true); setWaitTime(0); setError(null);
                 
-                // 1. స్టాటిక్ డేటా (Offline Data) ఉందేమో చెక్ చేయడం
-                // గమనిక: ఇక్కడ prefLang === 'en' అని పెట్టాం. అంటే ఇంగ్లీష్ అయితేనే స్టాటిక్ డేటా వెతుకుతుంది.
-                // హిందీ అయితే వెతకదు (null వస్తుంది).
+                // 1. Static Data Check (Only for English)
                 const staticData = (prefLang === 'en' && window.STATIC_ENGLISH_DATA) 
                     ? (window.STATIC_ENGLISH_DATA[lesson.id] || window.STATIC_ENGLISH_DATA[String(lesson.id)]) 
                     : null;
 
-                // 2. ఆఫ్ లైన్ మోడ్ (కీ లేకపోయినా, డేటా ఉంటే ఓపెన్ చెయ్యి - కేవలం ఇంగ్లీష్ కి మాత్రమే ఇది జరుగుతుంది)
+                // 2. Offline Mode Logic
                 if (staticData && !apiKey) {
                     console.log("Offline Mode: Loading Static Data without API Key");
-                    
                     const offlineData = {
                         teluguTitle: lesson.title, 
-                        concepts: staticData.concepts, // మన స్టాటిక్ కాన్సెప్ట్స్
-                        quizEnglish: [], // కీ లేదు కాబట్టి క్విజ్ రాదు
+                        concepts: staticData.concepts, 
+                        quizEnglish: [], 
                         quizHindi: []
                     };
-
-                    // టీచర్స్ నోట్స్ కలపడం
-                    const localNote = window.CLASS_NOTES?.[lesson.id] || window.CLASS_NOTES?.[String(lesson.id)];
-                    if(localNote) offlineData.rawNote = localNote;
+                    
+                    // FIX: కేవలం ఇంగ్లీష్ అయితేనే నోట్స్ కలపాలి
+                    if (prefLang === 'en') {
+                        const localNote = window.CLASS_NOTES?.[lesson.id] || window.CLASS_NOTES?.[String(lesson.id)];
+                        if(localNote) offlineData.rawNote = localNote;
+                    }
 
                     setLessonData(offlineData);
                     setLoading(false);
                     setView('lesson');
-                    return; // ఇక్కడితో ఆపేస్తుంది (AI ని పిలవదు)
+                    return; 
                 }
 
-                // 3. కీ చెకింగ్ (హిందీ కోసం లేదా ఇంగ్లీష్ క్విజ్ కోసం)
-                // పైన కండిషన్ ఫెయిల్ అయితే (అంటే హిందీ అనుకోండి), ఇక్కడికి వస్తుంది.
-                // అప్పుడు కీ లేకపోతే సెట్టింగ్స్ అడుగుతుంది.
+                // 3. API Key Check
                 if (!apiKey) { 
                     setShowSettings(true); 
                     setLoading(false); 
                     return; 
                 }
 
-                // 4. API కాలింగ్ (Online Mode)
+                // 4. API Calling (Online Mode)
                 try {
                     const cacheKey = `spokenpro_v10_l${lesson.id}_q${prefQCount}_${prefLang}`;
                     let data = localStorage.getItem(cacheKey);
@@ -1058,13 +1055,15 @@ const HINDI_CURRICULUM = [
                         await new Promise(r => setTimeout(r, 300));
                         data = JSON.parse(data);
                     } else {
-                        // ఇంగ్లీష్ అయితే Hybrid, హిందీ అయితే Full AI
                         data = await generateLessonContent(apiKey, modelId, lesson, prefQCount, prefLang, (t) => setWaitTime(t));
                         localStorage.setItem(cacheKey, JSON.stringify(data));
                     }
                     
-                    const localNote = window.CLASS_NOTES?.[lesson.id] || window.CLASS_NOTES?.[String(lesson.id)];
-                    if(localNote) data.rawNote = localNote; 
+                    // FIX: కేవలం ఇంగ్లీష్ అయితేనే నోట్స్ కలపాలి
+                    if (prefLang === 'en') {
+                        const localNote = window.CLASS_NOTES?.[lesson.id] || window.CLASS_NOTES?.[String(lesson.id)];
+                        if(localNote) data.rawNote = localNote; 
+                    }
                     
                     setLessonData(data);
                     setView('lesson');
@@ -1422,8 +1421,9 @@ const HINDI_CURRICULUM = [
                             </div>
                         ))}
 
-                        {/* 4. TEACHER NOTE SECTION (Moved to BOTTOM) */}
-                        {(lessonData.rawNote || window.CLASS_NOTES?.[selectedLesson.id] || window.CLASS_NOTES?.[String(selectedLesson.id)] || selectedLesson.note || window.allLessonDiagrams?.find(d => d.classId === "Class " + String(selectedLesson.id).padStart(2, '0'))) && (() => {
+                                                {/* 4. TEACHER NOTE SECTION (Moved to BOTTOM) */}
+                        {/* FIX: prefLang === 'en' ఉంటేనే ఇది కనిపిస్తుంది */}
+                        {prefLang === 'en' && (lessonData.rawNote || window.CLASS_NOTES?.[selectedLesson.id] || window.CLASS_NOTES?.[String(selectedLesson.id)] || selectedLesson.note || window.allLessonDiagrams?.find(d => d.classId === "Class " + String(selectedLesson.id).padStart(2, '0'))) && (() => {
                             const noteContent = lessonData.rawNote || window.CLASS_NOTES?.[selectedLesson.id] || window.CLASS_NOTES?.[String(selectedLesson.id)] || selectedLesson.note || "";
                             const cleanNote = noteContent.replace(/\[Source:.*?\]/gi, '').trim();
                             const paragraphs = cleanNote.split('\n').filter(p => p.trim() !== "");
@@ -1463,7 +1463,6 @@ const HINDI_CURRICULUM = [
                                             const isHeader = para.trim().startsWith('**');
                                             const txt = para.replace(/\*\*/g, '').trim();
                                             
-                                            // FIX: Hindi Color Logic Restored
                                             const isHindi = /[\u0900-\u097F]/.test(txt);
                                             const indicatorColor = isHindi ? 'bg-orange-500' : 'bg-blue-400 dark:bg-blue-600';
 
@@ -1479,15 +1478,10 @@ const HINDI_CURRICULUM = [
                                             
                                             return (
                                                 <div key={index} className="flex gap-3 group items-start">
-                                                    {/* Color Dot */}
                                                     <div className={`mt-2.5 w-1.5 h-1.5 rounded-full ${indicatorColor} shrink-0`}></div>
-                                                    
-                                                    {/* Text */}
                                                     <p className="text-gray-700 dark:text-slate-300 text-[15px] leading-relaxed font-telugu flex-1">
                                                         {renderColoredText(txt)}
                                                     </p>
-                                                    
-                                                    {/* Speaker Button */}
                                                     <button onClick={() => speak(txt, 'te')} className="shrink-0 p-1 text-gray-400 hover:text-blue-600 dark:text-gray-500 dark:hover:text-blue-400 opacity-60 hover:opacity-100 transition-opacity mt-1">
                                                         <i className="ph ph-speaker-simple-high text-lg"></i>
                                                     </button>
