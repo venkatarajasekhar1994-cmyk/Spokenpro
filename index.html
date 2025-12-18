@@ -1,11 +1,11 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#2563eb">
-    <meta name="description" content="SpeakPro - Learn English & Hindi through conversation">
-    <title>SpeakPro - Glass PWA</title>
+    <meta name="description" content="SpokenPro - Learn English & Hindi through conversation">
+    <title>SpokenPro - Glass PWA</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="logo.png">
@@ -14,10 +14,9 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- FIX 1: Tailwind CDN ను 'class' డార్క్ మోడ్ కోసం కాన్ఫిగర్ చేయండి -->
     <script>
         tailwind.config = {
-            darkMode: 'class', // ఇది థీమ్ స్విచ్చర్‌ను సరిగ్గా పనిచేయిస్తుంది
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -34,23 +33,34 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
+        /* --- CORE STYLES --- */
+        :root { color-scheme: light; }
+        .dark { color-scheme: dark; }
+
         body { 
             font-family: 'Open Sans', sans-serif; 
-            background-color: #f8fafc; /* slate-50 */
+            background-color: #f8fafc; 
             min-height: 100vh;
             -webkit-tap-highlight-color: transparent; 
-            transition: background-color 0.3s ease;
-            /* FIX 3: లైట్ మోడ్ కోసం డిఫాల్ట్ టెక్స్ట్ రంగును సెట్ చేయండి */
-            color: #020617; /* slate-950 */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            color: #0f172a !important; 
+        }
+        .dark body {
+            background-color: #0f172a; 
+            color: #f1f5f9 !important; 
         }
 
-        /* Glass Utility Classes */
+        /* --- GLASS COMPONENTS --- */
         .glass-panel {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        .dark .glass-panel {
+            background: rgba(26, 38, 58, 0.75);
+            border: 1px solid rgba(51, 65, 85, 0.5);
         }
         .glass-card {
             background: rgba(255, 255, 255, 0.6);
@@ -58,27 +68,45 @@
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            color: #0f172a; 
         }
-        /* FIX: Darker text for AI bubble in light mode */
-        .glass-bubble-ai {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            color: #020617; /* slate-950 */
-            border-radius: 18px 18px 18px 0;
+        .dark .glass-card {
+            background: rgba(26, 38, 58, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.4);
+            color: #f1f5f9; 
         }
         .glass-input {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #000000 !important; 
+        }
+        .dark .glass-input {
+            background: rgba(43, 56, 78, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            color: #ffffff !important; 
+        }
+        .glass-input::placeholder { color: #64748b; }
+        .dark .glass-input::placeholder { color: #94a3b8; }
+        .glass-bubble-ai {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: #020617 !important;
+            border-radius: 18px 18px 18px 0;
+        }
+        .dark .glass-bubble-ai {
+            background: rgba(43, 56, 78, 0.85);
+            border: 1px solid rgba(63, 80, 102, 1);
+            color: #f1f5f9 !important;
         }
 
+        /* --- ANIMATIONS & UTILS --- */
         .font-telugu { font-family: 'Ramabhadra', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
         .animate-spin-slow { animation: spin 1.5s linear infinite; }
         .animate-pulse-ring { animation: pulse-ring 2s infinite; }
-
         @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse-ring {
@@ -86,51 +114,42 @@
             70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
-        
         .bubble-user { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-radius: 18px 18px 0 18px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
         .feedback-box { background: rgba(255, 251, 235, 0.9); border-left: 4px solid #f59e0b; color: #92400e; font-size: 0.85rem; backdrop-filter: blur(4px); }
+        .dark .feedback-box { background: rgba(60, 44, 7, 0.9); border-left: 4px solid #b45309; color: #fef9c3; }
         
         img[src*="placehold.co"] {
             background-color: #e2e8f0; color: #475569; object-fit: cover;
             text-align: center; font-size: 12px; font-family: 'Open Sans', sans-serif;
         }
-
-        /* --- DARK MODE STYLES --- */
-        .dark body {
-            background-color: #0f172a; /* slate-900 */
-            /* FIX 3: డార్క్ మోడ్ కోసం డిఫాల్ట్ టెక్స్ట్ రంగును సెట్ చేయండి */
-            color: #f1f5f9; /* slate-100 */
-        }
-        .dark .glass-panel {
-            background: rgba(26, 38, 58, 0.75); /* slate-800/75 */
-            border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
-        }
-        .dark .glass-card {
-            background: rgba(26, 38, 58, 0.6); /* slate-800/60 */
-            border: 1px solid rgba(51, 65, 85, 0.4); /* slate-700/40 */
-        }
-        .dark .glass-bubble-ai {
-            background: rgba(43, 56, 78, 0.85); /* slate-700/85 */
-            border: 1px solid rgba(63, 80, 102, 1); /* slate-600 */
-            color: #f1f5f9; /* slate-100 */
-        }
-        .dark .glass-input {
-            background: rgba(43, 56, 78, 0.6); /* slate-700/60 */
-            border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
-            color: white;
-        }
-        .dark .feedback-box {
-            background: rgba(60, 44, 7, 0.9); /* yellow-900/90 */
-            border-left: 4px solid #b45309; /* yellow-700 */
-            color: #fef9c3; /* yellow-100 */
-        }
     </style>
+
+    <script>
+        // Image Error Handler
+        document.addEventListener('error', function (e) {
+            if (e.target && e.target.tagName.toLowerCase() === 'img') {
+                e.target.style.display = 'none';
+            }
+        }, true);
+        // General Error Handler
+        window.onerror = function () { return true; };
+    </script>
 </head>
+
 <body>
     <div id="root"></div>
 
+    <script src="notes.js"></script>
+    <script src="diagram_data.js"></script>
+    <script src="static_data.js"></script>
+
     <script type="text/babel">
+        // Console Cleanup
+        console.warn = () => {};
+        console.error = () => {};
+
         const { useState, useEffect, useMemo, useRef } = React;
+
 
         class ErrorBoundary extends React.Component {
             constructor(props) {
@@ -158,83 +177,382 @@
             }
         }
 
-        // Full 25 Scenarios
+        // Full 53 Scenarios
         const SCENARIOS = [
-            { id: 1, icon: "ph-users-three", title: "Family (కుటుంబం)", prompt: "Role: Caring Mother. Context: Asking child about school and lunch.", startMsg: "Hello my dear! How was school today? Did you eat your lunch?" },
-            { id: 2, icon: "ph-confetti", title: "Friends (స్నేహితులు)", prompt: "Role: Best Friend. Context: Planning a movie for the weekend.", startMsg: "Hey buddy! Long time no see. Are we going to the movie this Saturday?" },
-            { id: 3, icon: "ph-briefcase", title: "Colleagues (ఆఫీస్)", prompt: "Role: Project Manager. Context: Asking about the project deadline status.", startMsg: "Hi, good morning. Have you completed the report I asked for yesterday?" },
-            { id: 4, icon: "ph-carrot", title: "Vegetable Market (కూరగాయలు)", prompt: "Role: Vegetable Vendor. Context: Selling fresh tomatoes and negotiating price.", startMsg: "Madam! Fresh tomatoes just arrived. Only 40 rupees a kilo. How much do you need?" },
-            { id: 5, icon: "ph-stethoscope", title: "Doctor (డాక్టర్)", prompt: "Role: Doctor. Context: Diagnosing fever and cold symptoms.", startMsg: "Hello. Please sit down. What seems to be the problem today?" },
-            { id: 6, icon: "ph-fork-knife", title: "Restaurant (రెస్టారెంట్)", prompt: "Role: Waiter. Context: Taking order for dinner.", startMsg: "Good evening sir/madam. Here is the menu. Would you like to start with some soup?" },
-            { id: 7, icon: "ph-user-focus", title: "Job Interview (ఇంటర్వ్యూ)", prompt: "Role: HR Manager. Context: Interviewing for a software developer role.", startMsg: "Welcome. Please introduce yourself and tell me about your experience." },
-            { id: 8, icon: "ph-map-pin", title: "Asking Directions (చిరునామా)", prompt: "Role: Local Stranger. Context: Helping someone find the post office.", startMsg: "Excuse me? Are you lost? Where do you want to go?" },
-            { id: 9, icon: "ph-bus", title: "Bus Station (బస్)", prompt: "Role: Bus Conductor. Context: Asking for tickets and destination.", startMsg: "Ticket! Ticket! Where to? Move to the back please." },
-            { id: 10, icon: "ph-bank", title: "Bank (బ్యాంకు)", prompt: "Role: Bank Manager. Context: Discussing a personal loan application.", startMsg: "Good morning. You wanted to apply for a personal loan, right? Do you have your ID proof?" },
-            { id: 11, icon: "ph-shopping-bag", title: "Shopping Mall (షాపింగ్)", prompt: "Role: Sales Executive. Context: Helping customer choose a shirt.", startMsg: "Hello sir. Looking for formal shirts or casuals? We have a new collection." },
-            { id: 12, icon: "ph-phone-call", title: "Telephone (ఫోన్)", prompt: "Role: Customer Care. Context: Resolving an internet connection issue.", startMsg: "Thank you for calling Airtel. How may I assist you with your internet connection today?" },
-            { id: 13, icon: "ph-house-line", title: "Neighbors (పొరుగువారు)", prompt: "Role: Neighbor. Context: Asking to lower music volume.", startMsg: "Hi there! Sorry to disturb, but could you please lower the music volume a bit?" },
-            { id: 14, icon: "ph-chalkboard-teacher", title: "Teacher (టీచర్)", prompt: "Role: Class Teacher. Context: Discussing student's exam marks.", startMsg: "Good morning. I wanted to talk about your son's math marks. He needs to practice more." },
-            { id: 15, icon: "ph-ticket", title: "Booking Tickets (టికెట్లు)", prompt: "Role: Ticket Clerk. Context: Booking movie tickets.", startMsg: "Which movie and which show time do you want tickets for?" },
-            { id: 16, icon: "ph-bed", title: "Hotel Stay (హోటల్)", prompt: "Role: Receptionist. Context: Guest check-in process.", startMsg: "Welcome to Hotel Taj. Do you have a reservation under your name?" },
-            { id: 17, icon: "ph-scissors", title: "Tailor (టైలర్)", prompt: "Role: Tailor. Context: Taking measurements for a dress.", startMsg: "Do you want the sleeves short or long? Let me take your measurements." },
-            { id: 18, icon: "ph-wrench", title: "Mechanic (మెకానిక్)", prompt: "Role: Bike Mechanic. Context: Explaining brake failure.", startMsg: "Sir, your bike's rear brake is completely worn out. It needs replacement." },
-            { id: 19, icon: "ph-pill", title: "Pharmacy (మందుల షాపు)", prompt: "Role: Pharmacist. Context: Giving medicines for a prescription.", startMsg: "Here are your medicines. Take this yellow tablet after dinner." },
-            { id: 20, icon: "ph-siren", title: "Police Station (పోలీస్)", prompt: "Role: Police Inspector. Context: Taking a complaint about a lost phone.", startMsg: "Sit down. When and where did you lose your mobile phone? Tell me the details." },
-            { id: 21, icon: "ph-airplane-tilt", title: "Airport (ఎయిర్‌పోర్ట్)", prompt: "Role: Check-in Staff. Context: Checking passport and luggage.", startMsg: "Good morning. May I have your passport and ticket please?" },
-            { id: 22, icon: "ph-books", title: "Library (గ్రంథాలయం)", prompt: "Role: Librarian. Context: Issuing a book.", startMsg: "This book is due in 15 days. Please return it on time to avoid a fine." },
-            { id: 23, icon: "ph-barbell", title: "Gym (జిమ్)", prompt: "Role: Gym Trainer. Context: Explaining a workout routine.", startMsg: "Okay, today we will focus on cardio. Start with 10 minutes on the treadmill." },
-            { id: 24, icon: "ph-film-strip", title: "Movie Theater (సినిమా)", prompt: "Role: Friend. Context: Discussing a movie interval.", startMsg: "The first half was amazing, right? The hero's entry was superb!" },
-            { id: 25, icon: "ph-cake", title: "Party (ఫంక్షన్)", prompt: "Role: Host. Context: Welcoming guests to a birthday party.", startMsg: "So glad you could make it! Please come in and have some cake." }
-        ];
+    // --- ORIGINAL 1-25 ---
+    { id: 1, icon: "ph-users-three", title: "Family (కుటుంబం)", prompt: "Role: Caring Mother. Context: Asking child about school and lunch.", startMsg: "Hello my dear! How was school today? Did you eat your lunch?" },
+    { id: 2, icon: "ph-confetti", title: "Friends (స్నేహితులు)", prompt: "Role: Best Friend. Context: Planning a movie for the weekend.", startMsg: "Hey buddy! Long time no see. Are we going to the movie this Saturday?" },
+    { id: 3, icon: "ph-briefcase", title: "Colleagues (ఆఫీస్)", prompt: "Role: Project Manager. Context: Asking about the project deadline status.", startMsg: "Hi, good morning. Have you completed the report I asked for yesterday?" },
+    { id: 4, icon: "ph-carrot", title: "Vegetable Market (కూరగాయలు)", prompt: "Role: Vegetable Vendor. Context: Selling fresh tomatoes and negotiating price.", startMsg: "Madam! Fresh tomatoes just arrived. Only 40 rupees a kilo. How much do you need?" },
+    { id: 5, icon: "ph-stethoscope", title: "Doctor (డాక్టర్)", prompt: "Role: Doctor. Context: Diagnosing fever and cold symptoms.", startMsg: "Hello. Please sit down. What seems to be the problem today?" },
+    { id: 6, icon: "ph-fork-knife", title: "Restaurant (రెస్టారెంట్)", prompt: "Role: Waiter. Context: Taking order for dinner.", startMsg: "Good evening sir/madam. Here is the menu. Would you like to start with some soup?" },
+    { id: 7, icon: "ph-user-focus", title: "Job Interview (ఇంటర్వ్యూ)", prompt: "Role: HR Manager. Context: Interviewing for a software developer role.", startMsg: "Welcome. Please introduce yourself and tell me about your experience." },
+    { id: 8, icon: "ph-map-pin", title: "Asking Directions (చిరునామా)", prompt: "Role: Local Stranger. Context: Helping someone find the post office.", startMsg: "Excuse me? Are you lost? Where do you want to go?" },
+    { id: 9, icon: "ph-bus", title: "Bus Station (బస్)", prompt: "Role: Bus Conductor. Context: Asking for tickets and destination.", startMsg: "Ticket! Ticket! Where to? Move to the back please." },
+    { id: 10, icon: "ph-bank", title: "Bank (బ్యాంకు)", prompt: "Role: Bank Manager. Context: Discussing a personal loan application.", startMsg: "Good morning. You wanted to apply for a personal loan, right? Do you have your ID proof?" },
+    { id: 11, icon: "ph-shopping-bag", title: "Shopping Mall (షాపింగ్)", prompt: "Role: Sales Executive. Context: Helping customer choose a shirt.", startMsg: "Hello sir. Looking for formal shirts or casuals? We have a new collection." },
+    { id: 12, icon: "ph-phone-call", title: "Telephone (ఫోన్)", prompt: "Role: Customer Care. Context: Resolving an internet connection issue.", startMsg: "Thank you for calling Airtel. How may I assist you with your internet connection today?" },
+    { id: 13, icon: "ph-house-line", title: "Neighbors (పొరుగువారు)", prompt: "Role: Neighbor. Context: Asking to lower music volume.", startMsg: "Hi there! Sorry to disturb, but could you please lower the music volume a bit?" },
+    { id: 14, icon: "ph-chalkboard-teacher", title: "Teacher (టీచర్)", prompt: "Role: Class Teacher. Context: Discussing student's exam marks.", startMsg: "Good morning. I wanted to talk about your son's math marks. He needs to practice more." },
+    { id: 15, icon: "ph-ticket", title: "Booking Tickets (టికెట్లు)", prompt: "Role: Ticket Clerk. Context: Booking movie tickets.", startMsg: "Which movie and which show time do you want tickets for?" },
+    { id: 16, icon: "ph-bed", title: "Hotel Stay (హోటల్)", prompt: "Role: Receptionist. Context: Guest check-in process.", startMsg: "Welcome to Hotel Taj. Do you have a reservation under your name?" },
+    { id: 17, icon: "ph-scissors", title: "Tailor (టైలర్)", prompt: "Role: Tailor. Context: Taking measurements for a dress.", startMsg: "Do you want the sleeves short or long? Let me take your measurements." },
+    { id: 18, icon: "ph-wrench", title: "Mechanic (మెకానిక్)", prompt: "Role: Bike Mechanic. Context: Explaining brake failure.", startMsg: "Sir, your bike's rear brake is completely worn out. It needs replacement." },
+    { id: 19, icon: "ph-pill", title: "Pharmacy (మందుల షాపు)", prompt: "Role: Pharmacist. Context: Giving medicines for a prescription.", startMsg: "Here are your medicines. Take this yellow tablet after dinner." },
+    { id: 20, icon: "ph-siren", title: "Police Station (పోలీస్)", prompt: "Role: Police Inspector. Context: Taking a complaint about a lost phone.", startMsg: "Sit down. When and where did you lose your mobile phone? Tell me the details." },
+    { id: 21, icon: "ph-airplane-tilt", title: "Airport (ఎయిర్‌పోర్ట్)", prompt: "Role: Check-in Staff. Context: Checking passport and luggage.", startMsg: "Good morning. May I have your passport and ticket please?" },
+    { id: 22, icon: "ph-books", title: "Library (గ్రంథాలయం)", prompt: "Role: Librarian. Context: Issuing a book.", startMsg: "This book is due in 15 days. Please return it on time to avoid a fine." },
+    { id: 23, icon: "ph-barbell", title: "Gym (జిమ్)", prompt: "Role: Gym Trainer. Context: Explaining a workout routine.", startMsg: "Okay, today we will focus on cardio. Start with 10 minutes on the treadmill." },
+    { id: 24, icon: "ph-film-strip", title: "Movie Theater (సినిమా)", prompt: "Role: Friend. Context: Discussing a movie interval.", startMsg: "The first half was amazing, right? The hero's entry was superb!" },
+    { id: 25, icon: "ph-cake", title: "Party (ఫంక్షన్)", prompt: "Role: Host. Context: Welcoming guests to a birthday party.", startMsg: "So glad you could make it! Please come in and have some cake." },
 
-        // Full 45 Classes
-        const CURRICULUM = [
-            { id: 1, phase: "Phase I", title: "Class 01: Pronoun Roles", desc: "Subject (I, We) vs Object (Me, Us)" },
-            { id: 2, phase: "Phase I", title: "Class 02: Self-Introduction", desc: "Name, family, profession, hobbies" },
-            { id: 3, phase: "Phase I", title: "Class 03: Regular Verbs", desc: "Conjugation patterns (V1, V2, V3)" },
-            { id: 4, phase: "Phase I", title: "Class 04: Irregular Verbs", desc: "High frequency irregulars" },
-            { id: 5, phase: "Phase I", title: "Class 05: Simple Present", desc: "Habitual actions" },
-            { id: 6, phase: "Phase I", title: "Class 06: Simple Present (Do/Does)", desc: "Questions & Negatives" },
-            { id: 7, phase: "Phase I", title: "Class 07: WH-Questions", desc: "What, Why, Where, How" },
-            { id: 8, phase: "Phase I", title: "Class 08: Simple Past", desc: "Completed actions (V2)" },
-            { id: 9, phase: "Phase I", title: "Class 09: Simple Past (Did)", desc: "Past negatives and questions" },
-            { id: 10, phase: "Phase I", title: "Class 10: WH-Questions (Did)", desc: "Detailed past inquiries" },
-            { id: 11, phase: "Phase I", title: "Class 11: Simple Future", desc: "Will/Shall for future" },
-            { id: 12, phase: "Phase I", title: "Class 12: WH-Questions (Future)", desc: "Future inquiries" },
-            { id: 13, phase: "Phase II", title: "Class 13: Present Continuous", desc: "Am/Is/Are + V-ing" },
-            { id: 14, phase: "Phase II", title: "Class 14: Past Continuous", desc: "Was/Were + V-ing" },
-            { id: 15, phase: "Phase II", title: "Class 15: Future Continuous", desc: "Will be + V-ing" },
-            { id: 16, phase: "Phase III", title: "Class 16: Can/Could", desc: "Ability & Permission" },
-            { id: 17, phase: "Phase III", title: "Class 17: May/Might", desc: "Possibility & Uncertainty" },
-            { id: 18, phase: "Phase III", title: "Class 18: Should", desc: "Advice & Duty" },
-            { id: 19, phase: "Phase III", title: "Class 19: Must", desc: "Strong Obligation" },
-            { id: 20, phase: "Phase III", title: "Class 20: Would", desc: "Past habits & Requests" },
-            { id: 21, phase: "Phase IV", title: "Class 21: Have/Has", desc: "Possession" },
-            { id: 22, phase: "Phase IV", title: "Class 22: Present Perfect", desc: "Recent past (Have + V3)" },
-            { id: 23, phase: "Phase IV", title: "Class 23: Past Perfect", desc: "Action before action (Had + V3)" },
-            { id: 24, phase: "Phase IV", title: "Class 24: Future Perfect", desc: "Completed by future" },
-            { id: 25, phase: "Phase IV", title: "Class 25: Should have", desc: "Past unfulfilled duties" },
-            { id: 26, phase: "Phase IV", title: "Class 26: May have", desc: "Past possibility" },
-            { id: 27, phase: "Phase IV", title: "Class 27: Would have", desc: "Hypothetical past" },
-            { id: 28, phase: "Phase IV", title: "Class 28: Past Review", desc: "Review of all past forms" },
-            { id: 29, phase: "Phase IV", title: "Class 29: Present Perf. Cont.", desc: "Have been + V-ing" },
-            { id: 30, phase: "Phase IV", title: "Class 30: Past Perf. Cont.", desc: "Had been + V-ing" },
-            { id: 31, phase: "Phase IV", title: "Class 31: Future Perf. Cont.", desc: "Will have been + V-ing" },
-            { id: 32, phase: "Phase IV", title: "Class 32: Modal Cont.", desc: "Should be + V-ing" },
-            { id: 33, phase: "Phase IV", title: "Class 33: Should have been", desc: "Past continuous modals" },
-            { id: 34, phase: "Phase IV", title: "Class 34: Would have been", desc: "Hypothetical continuous" },
-            { id: 35, phase: "Phase IV", title: "Class 35: Review", desc: "Synthesis of perfects" },
-            { id: 36, phase: "Phase V", title: "Class 36: Have to", desc: "External compulsion" },
-            { id: 37, phase: "Phase V", title: "Class 37: Need/Dare", desc: "Necessity & Courage" },
-            { id: 38, phase: "Phase V", title: "Class 38: Want/Wish", desc: "Desires & Preferences" },
-            { id: 39, phase: "Phase V", title: "Class 39: Able to/Going to", desc: "Ability & Plans" },
-            { id: 40, phase: "Phase V", title: "Class 40: Had to", desc: "Past compulsion" },
-            { id: 41, phase: "Phase V", title: "Class 41: Used to", desc: "Past habits" },
-            { id: 42, phase: "Phase VI", title: "Class 42: Tenses Matrix", desc: "The 12 Tenses Map" },
-            { id: 43, phase: "Phase VI", title: "Class 43: Tenses Drill", desc: "Conjugation Practice" },
-            { id: 44, phase: "Phase VI", title: "Class 44: Active/Passive", desc: "Voice Transformation" },
-            { id: 45, phase: "Phase VI", title: "Class 45: Be with P.P. Form", desc: "Master key: Static states in modal contexts" }
-        ];
+    // --- NEW INTEGRATED SCENARIOS (IDs 26-53) ---
+
+    { 
+        id: 26, 
+        icon: "ph-hand-waving", 
+        title: "Self Introduction (పరిచయం)", 
+        prompt: "Role: New Colleague. Context: Introducing yourself on the first day.", 
+        startMsg: "Hello! My name is... I am from... In my free time I like to..." 
+    },
+    { 
+        id: 27, 
+        icon: "ph-house", 
+        title: "My Home (నా ఇల్లు)", 
+        prompt: "Role: Visitor. Context: You are describing your home layout to a guest.", 
+        startMsg: "Welcome! In my house, there are... The living room is where we..." 
+    },
+    { 
+        id: 28, 
+        icon: "ph-users", 
+        title: "Family Details (కుటుంబ వివరాలు)", 
+        prompt: "Role: Friend. Context: Describing your family members in detail.", 
+        startMsg: "I have ___ people in my family. My father works as... My mother is..." 
+    },
+    { 
+        id: 29, 
+        icon: "ph-clock", 
+        title: "Daily Routine (దినచర్య)", 
+        prompt: "Role: Lifestyle Coach. Context: Explaining your morning schedule.", 
+        startMsg: "Every morning, I wake up at... The first thing I do is..." 
+    },
+    { 
+        id: 30, 
+        icon: "ph-pizza", 
+        title: "Favorite Food (ఇష్టమైన ఆహారం)", 
+        prompt: "Role: Foodie Friend. Context: Discussing why you love a specific dish.", 
+        startMsg: "My favorite food is... because the taste is... I usually eat it with..." 
+    },
+    { 
+        id: 31, 
+        icon: "ph-calendar-check", 
+        title: "Weekend Plan (వారాంతపు ప్లాన్)", 
+        prompt: "Role: Cousin. Context: Making a plan for Sunday.", 
+        startMsg: "This weekend, I want to... We could go to..." 
+    },
+    { 
+        id: 32, 
+        icon: "ph-buildings", 
+        title: "My City (నా నగరం)", 
+        prompt: "Role: Tourist Guide. Context: Describing your city's famous spots.", 
+        startMsg: "I live in ___. It is famous for... You must visit..." 
+    },
+    // Skipped 'Movie' (Day 8) as it duplicates ID 24
+    { 
+        id: 33, 
+        icon: "ph-sparkle", 
+        title: "Festivals (పండుగలు)", 
+        prompt: "Role: Foreign Friend. Context: Explaining how you celebrate festivals.", 
+        startMsg: "During Sankranthi / Diwali, we usually... We make special sweets like..." 
+    },
+    { 
+        id: 34, 
+        icon: "ph-lightbulb", 
+        title: "New Learning (కొత్త విషయం)", 
+        prompt: "Role: Mentor. Context: Sharing a fact you learned recently.", 
+        startMsg: "Yesterday I learned that... It was interesting because..." 
+    },
+    { 
+        id: 35, 
+        icon: "ph-heart", 
+        title: "Best Friend (ప్రియమైన స్నేహితుడు)", 
+        prompt: "Role: Sibling. Context: Describing your best friend's personality.", 
+        startMsg: "My best friend is... We met at... I like them because..." 
+    },
+    { 
+        id: 36, 
+        icon: "ph-device-mobile", 
+        title: "Smartphone Use (స్మార్ట్‌ఫోన్ వాడకం)", 
+        prompt: "Role: Tech Support. Context: Explaining your main uses for a phone.", 
+        startMsg: "I use my phone mainly for... My favorite feature is..." 
+    },
+    { 
+        id: 37, 
+        icon: "ph-app-window", 
+        title: "Favorite App (ఇష్టమైన యాప్)", 
+        prompt: "Role: Classmate. Context: Recommending a useful app.", 
+        startMsg: "I enjoy using ___ because... It helps me to..." 
+    },
+    { 
+        id: 38, 
+        icon: "ph-warning", 
+        title: "English Challenges (ఇంగ్లీష్ కష్టాలు)", 
+        prompt: "Role: Language Teacher. Context: Discussing difficult parts of learning.", 
+        startMsg: "One challenge I have is... I find it hard to pronounce..." 
+    },
+    { 
+        id: 39, 
+        icon: "ph-chat-circle-text", 
+        title: "Daily Sentence (రోజువారీ వాక్యం)", 
+        prompt: "Role: Study Partner. Context: Practicing a new sentence you used.", 
+        startMsg: "Today I said... I felt confident when I used it." 
+    },
+    { 
+        id: 40, 
+        icon: "ph-storefront", 
+        title: "Local Shop (కిరాణా కొట్టు)", 
+        prompt: "Role: Neighbor. Context: Describing a nearby shop.", 
+        startMsg: "There is a store near my home that... They sell the best..." 
+    },
+    { 
+        id: 41, 
+        icon: "ph-eye", 
+        title: "Observations (పరిశీలన)", 
+        prompt: "Role: Video Caller. Context: Describing your current surroundings.", 
+        startMsg: "I'm sitting in ___ and I can see... The atmosphere is..." 
+    },
+    { 
+        id: 42, 
+        icon: "ph-confetti", 
+        title: "Sweet Memory (మధుర జ్ఞాపకం)", 
+        prompt: "Role: Grandparent. Context: Remembering a past festival.", 
+        startMsg: "I remember one Diwali when... We had so much fun because..." 
+    },
+    { 
+        id: 43, 
+        icon: "ph-signpost", 
+        title: "Giving Directions (దారి చూపడం)", 
+        prompt: "Role: Stranger. Context: Giving directions to a bus stop.", 
+        startMsg: "To reach the bus stop, go straight and then... Look for the..." 
+    },
+    { 
+        id: 44, 
+        icon: "ph-star", 
+        title: "Dream Job (కలల ఉద్యోగం)", 
+        prompt: "Role: Career Counselor. Context: Discussing your ambition.", 
+        startMsg: "I want to become a ___ because... It requires skills like..." 
+    },
+    { 
+        id: 45, 
+        icon: "ph-smiley", 
+        title: "Mood Today (ఈ రోజు మూడ్)", 
+        prompt: "Role: Therapist. Context: Expressing how you feel today.", 
+        startMsg: "Today I feel ___ because... I hope tomorrow will be..." 
+    },
+    { 
+        id: 46, 
+        icon: "ph-translate", 
+        title: "Proverbs (సామెతలు)", 
+        prompt: "Role: Cultural Guide. Context: Translating a Telugu saying.", 
+        startMsg: "There is a saying in Telugu that means... In English, it translates to..." 
+    },
+    { 
+        id: 47, 
+        icon: "ph-check-circle", 
+        title: "Problem Solving (సమస్య పరిష్కారం)", 
+        prompt: "Role: Manager. Context: Reporting how you fixed an issue.", 
+        startMsg: "Recently, I fixed... It was broken, so I..." 
+    },
+    { 
+        id: 48, 
+        icon: "ph-image", 
+        title: "Photo Story (ఫోటో కథ)", 
+        prompt: "Role: Relative. Context: Explaining a photo on your phone.", 
+        startMsg: "In this photo, you can see... We took this picture when..." 
+    },
+    { 
+        id: 49, 
+        icon: "ph-cooking-pot", 
+        title: "Cooking Recipe (వంట విధానం)", 
+        prompt: "Role: Chef. Context: Explaining how to make Dosa.", 
+        startMsg: "To make dosa, first you... Then you need to..." 
+    },
+    { 
+        id: 50, 
+        icon: "ph-coffee", 
+        title: "Cafe Order (కాఫీ ఆర్డర్)", 
+        prompt: "Role: Customer. Context: Ordering food at a counter.", 
+        startMsg: "Hi, can I get a ___, please? I would also like..." 
+    },
+    // Skipped 'Booking Ticket' (Day 27) as it duplicates ID 15
+    { 
+        id: 51, 
+        icon: "ph-baby", 
+        title: "Childhood (చిన్ననాటి జ్ఞాపకం)", 
+        prompt: "Role: Old School Friend. Context: Talking about childhood games.", 
+        startMsg: "When I was a child, I used to... My favorite game was..." 
+    },
+    { 
+        id: 52, 
+        icon: "ph-sun", 
+        title: "Weather (వాతావరణం)", 
+        prompt: "Role: News Reporter. Context: Giving a weather report.", 
+        startMsg: "Today in Hyderabad, it is... The temperature is..." 
+    },
+    { 
+        id: 53, 
+        icon: "ph-path", 
+        title: "Final Reflection (ముగింపు)", 
+        prompt: "Role: Mentor. Context: Reflecting on your English journey.", 
+        startMsg: "This challenge helped me... I am now better at..." 
+    }
+];
+
+
+                // --- Integrated Curriculum (New Foundations First + Core 45 Preserved) ---
+const CURRICULUM = [
+    // ============================================================
+    // PART 1: NEW FOUNDATION CLASSES (LEARN THESE FIRST)
+    // IDs start at 101 to avoid breaking your original Class 1 images.
+    // ============================================================
+    { id: 101, phase: "Foundation", title: "Class 00: Greetings & Feelings", desc: "Learn to express emotions (Affection, Anger), apologies, requests, and disagreements. Covers formal and informal greetings.", imageCount: 3 },
+    { id: 102, phase: "Foundation", title: "Class 00: Parts of Speech Overview", desc: "Defines the 8 types of words: Nouns, Pronouns, Verbs, Adjectives, Adverbs, Prepositions, Conjunctions, and Interjections.", imageCount: 3 },
+    { id: 103, phase: "Foundation", title: "Class 00: Important Vocabulary (Nouns)", desc: "A comprehensive list of essential nouns covering various concepts with Telugu translations to build a strong word bank.", imageCount: 3 },
+    { id: 104, phase: "Foundation", title: "Class 00: Pronouns (Deep Dive)", desc: "Covers Subject (I, We), Object (Me, Us), and Possessive pronouns (My, Mine) with clear differentiation.", imageCount: 3 },
+    { id: 105, phase: "Foundation", title: "Class 00: Adjectives (Describing)", desc: "Learn descriptive and quality adjectives to describe people, places, and things detailed with Telugu meanings.", imageCount: 3 },
+    { id: 106, phase: "Foundation", title: "Class 00: Adverbs (Modifiers)", desc: "Covers adverbs of manner, time, and frequency to explain 'how', 'when', and 'how often' an action happens.", imageCount: 3 },
+        { id: 107, phase: "Foundation", title: "Class 00: Prepositions (Position & Time)", desc: "Master positional (In, On, At) and time-related (Since, For, During) prepositions for clear communication.", imageCount: 6 },
+    { id: 108, phase: "Foundation", title: "Class 00: Conjunctions (Connectors)", desc: "Learn coordinating and subordinating conjunctions (and, but, because) to join sentences and ideas smoothly.", imageCount: 3 },
+    { id: 109, phase: "Foundation", title: "Class 00: Question Words (WH Table)", desc: "A comprehensive table of WH-words (What, Why, Where, How) with usage examples and Telugu translations.", imageCount: 2 },
+    
+    // కొత్తగా యాడ్ చేసిన వెర్బ్ క్లాసులు (Intro Only)
+    { id: 110, phase: "Foundation", title: "Class 00: Regular Verbs (Intro)", desc: "Introduction to standard verb forms (V1, V2, V3, V-ing) like Appeal, Arrive, Achieve, Award.", imageCount: 2 },
+    { id: 111, phase: "Foundation", title: "Class 00: Irregular Verbs (Intro)", desc: "Introduction to non-standard verb patterns like Breed, Bend, Burst, Beat.", imageCount: 2 },
+    { id: 112, phase: "Foundation", title: "Class 00: Interjections & Articles", desc: "Expressing sudden emotions (Wow, Alas) and mastering A, An, The usage.", imageCount: 3 },
+    // ============================================================
+    // PART 2: THE CORE 45 LESSONS (EXACTLY AS BEFORE)
+    // IDs 1-45 are kept strictly unchanged so your existing images work.
+    // ============================================================
+    
+    // --- Phase I: Core Action and Simple Tense Mastery ---
+    { id: 1, phase: "Phase I", title: "Class 01: Pronoun Roles", desc: "Establishes the core sentence structure (S+V+O) and differentiates between subject pronouns (I, We) and object pronouns (Me, Us).", imageCount: 2 },
+    { id: 2, phase: "Phase I", title: "Class 02: Self-Introduction", desc: "Teaches the full framework for self-presentation, covering name, family, profession, location, hobbies, and future aims.", imageCount: 1 },
+    { id: 3, phase: "Phase I", title: "Class 03: Regular Verbs", desc: "Drills the predictable conjugation patterns (V1, V2, V3, V-ing) for action verbs that follow regular morphological rules.", imageCount: 2 },
+    { id: 4, phase: "Phase I", title: "Class 04: Irregular Verbs", desc: "Focuses on the irregular forms of high-frequency verbs (e.g., eat/ate/eaten) essential for accurate tense formation.", imageCount: 2 },
+    { id: 5, phase: "Phase I", title: "Class 05: Simple Present Tense", desc: "Introduces the structure for expressing habitual actions, daily routines, and general truths using the base verb form or the -s/-es form.", imageCount: 2 },
+    { id: 6, phase: "Phase I", title: "Class 06: Simple Present (Do/Does)", desc: "Teaches the use of the auxiliary verbs Do and Does and their negative contractions (don't/doesn't) for questions and negative statements.", imageCount: 2 },
+    { id: 7, phase: "Phase I", title: "Class 07: WH-Questions (Do/Does)", desc: "Synthesizes Do and Does with question words (What, Why, Where, How) to form comprehensive interrogative sentences.", imageCount: 2 },
+    { id: 8, phase: "Phase I", title: "Class 08: Simple Past Tense", desc: "Focuses on using the Past Tense form (V2) to describe actions completed at a specific time in the past.", imageCount: 2 },
+    { id: 9, phase: "Phase I", title: "Class 09: Simple Past (Did)", desc: "Introduces the auxiliary verb Did (and its contraction didn't) for generating questions and negatives in the Past Tense.", imageCount: 2 },
+    { id: 10, phase: "Phase I", title: "Class 10: WH-Questions (Did)", desc: "Integrates Did with question words to ask detailed questions about completed past actions (e.g., What did you buy?).", imageCount: 2 },
+    { id: 11, phase: "Phase I", title: "Class 11: Simple Future Tense", desc: "Covers the use of Shall and Will (and their negative contractions shan't/won't) to express intentions and actions that will happen in the future.", imageCount: 3 },
+    { id: 12, phase: "Phase I", title: "Class 12: WH-Questions (Shall/Will)", desc: "Applies Shall/Will with WH-Words to inquire about future plans and outcomes.", imageCount: 3 },
+
+    // --- Phase II: Actions in Progress—Mastery of Continuous Forms ---
+    { id: 13, phase: "Phase II", title: "Class 13: Present Continuous (Am/Is/Are)", desc: "Teaches the V-ing form with the Be auxiliary to describe actions happening at the moment (I am teaching) or current states of being.", imageCount: 4 },
+    { id: 14, phase: "Phase II", title: "Class 14: Past Continuous (Was/Were)", desc: "Covers the use of Was/Were + V-ing to describe actions that were ongoing at some point in the past (e.g., We were watching a movie).", imageCount: 4 },
+    { id: 15, phase: "Phase II", title: "Class 15: Future Continuous (Shall be/Will be)", desc: "Uses Shall be/Will be + V-ing to express actions that will be in dynamic progression at a specified time in the future.", imageCount: 8 },
+
+    // --- Phase III: Modality, Ability, and Obligation ---
+    { id: 16, phase: "Phase III", title: "Class 16: Can/Could", desc: "Focuses on expressing present ability (Can) and past ability (Could), alongside their functions for requesting and giving permission.", imageCount: 4 },
+    { id: 17, phase: "Phase III", title: "Class 17: May/Might", desc: "Teaches the expression of uncertainty and possibility, noting the subtle difference that Might conveys a lesser possibility than May.", imageCount: 4 },
+    { id: 18, phase: "Phase III", title: "Class 18: Should", desc: "Covers the modal auxiliary Should for expressing general advice, responsibility, and duty.", imageCount: 4 },
+    { id: 19, phase: "Phase III", title: "Class 19: Must", desc: "Addresses the modal Must for expressing strong obligation, determination, or absolute necessity.", imageCount: 4 },
+    { id: 20, phase: "Phase III", title: "Class 20: Would (Past Habit) & Synthesis", desc: "Introduces Would to discuss past habitual actions (I would watch movies) and synthesizes all structures learned across Simple, Continuous, and core Modal forms.", imageCount: 4 },
+
+    // --- Phase IV: Perfect Tenses and Complex Modal Structures ---
+    { id: 21, phase: "Phase IV", title: "Class 21: Have/Has (Possession)", desc: "Clarifies the dual nature of Have/Has, detailing its role in expressing current possession (I have a car) and its uses in common phrasal expressions.", imageCount: 4 },
+    { id: 22, phase: "Phase IV", title: "Class 22: Present Perfect Tense", desc: "Focuses on Have/Has + Past Participle Form (P.P.F) to talk about actions completed in the recent past that still have relevance to the present.", imageCount: 4 },
+    { id: 23, phase: "Phase IV", title: "Class 23: Past Perfect Tense", desc: "Teaches Had + P.P.F to describe an action that occurred chronologically before another action in the past.", imageCount: 4 },
+    { id: 24, phase: "Phase IV", title: "Class 24: Future Perfect Tense", desc: "Covers Shall have/Will have + P.P.F to describe an action that will be completed by a specific deadline in the future.", imageCount: 4 },
+    { id: 25, phase: "Phase IV", title: "Class 25: Should have/Must have (P.P.F)", desc: "Covers modal perfects to express past unfulfilled actions or missed duties (Should have) and strong past likelihoods or assumptions (Must have).", imageCount: 4 },
+    { id: 26, phase: "Phase IV", title: "Class 26: May have/Might have (P.P.F)", desc: "Focuses on using these modal perfects to express degrees of uncertainty or possibility regarding actions that took place in the past.", imageCount: 4 },
+    { id: 27, phase: "Phase IV", title: "Class 27: Would have/Could have (P.P.F)", desc: "Teaches these forms for discussing hypothetical situations in the past, often conveying regret or missed opportunity (counterfactuals).", imageCount: 4 },
+    { id: 28, phase: "Phase IV", title: "Class 28: Past Actions Review", desc: "This class serves as a comprehensive checkpoint, reviewing all 17 structures used to describe actions in the past.", imageCount: 4 },
+    { id: 29, phase: "Phase IV", title: "Class 29: Present Perfect Continuous", desc: "Covers Have been/Has been + V-ing for actions that began in the past and continue up to the present moment.", imageCount: 4 },
+    { id: 30, phase: "Phase IV", title: "Class 30: Past Perfect Continuous", desc: "Focuses on Had been + V-ing for actions that were continuously happening before a specific moment in the past.", imageCount: 4 },
+    { id: 31, phase: "Phase IV", title: "Class 31: Future Perfect Continuous", desc: "Uses Shall have been/Will have been + V-ing to express the duration of an action leading up to a future point.", imageCount: 4 },
+    { id: 32, phase: "Phase IV", title: "Class 32: Continuous Modal Perfects", desc: "Introduces the modal perfect continuous structures (Should have been doing, Must have been playing) using the V-ing form.", imageCount: 4 },
+    { id: 33, phase: "Phase IV", title: "Class 33: Application of Should/Must Have Been", desc: "Continues the application and drilling of Should have been and Must have been for continuous actions in the past.", imageCount: 4 },
+    { id: 34, phase: "Phase IV", title: "Class 34: Application of Would/Could Have Been", desc: "Continues the application and drilling of Would have been and Could have been for continuous, hypothetical past actions.", imageCount: 4 },
+    { id: 35, phase: "Phase IV", title: "Class 35: Application of May/Might Have Been & Review", desc: "Concludes the perfect and modal perfect section by reviewing May have been and Might have been and provides a final synthesis of all modal and perfect forms.", imageCount: 4 },
+
+    // --- Phase V: Necessity, Desire, and Specialized Auxiliaries ---
+    { id: 36, phase: "Phase V", title: "Class 36: Have to/Has to (Present/Future)", desc: "Covers expressions of external compulsion, or the duty of a doer, in the present and the future (Shall have to/Will have to).", imageCount: 4 },
+    { id: 37, phase: "Phase V", title: "Class 37: Need to/Dare to/Ought to", desc: "Teaches specialized auxiliaries for necessity (Need to), courage (Dare to), and moral/social obligation (Ought to).", imageCount: 4 },
+    { id: 38, phase: "Phase V", title: "Class 38: Want to/Wish to/Would like to", desc: "Covers expressions of desire and wish, including direct desire (Want to), formal wish (Wish to), polite preference (Would like to), and the past unfulfilled wish (Wanted to).", imageCount: 4 },
+    { id: 39, phase: "Phase V", title: "Class 39: Able to, Willing to, Going to, etc.", desc: "Focuses on phrasal auxiliaries expressing current state or intent, such as ability (Able to), readiness (Willing to), and planning (Going to/Planning to).", imageCount: 4 },
+    { id: 40, phase: "Phase V", title: "Class 40: Had to (Past Obligation)", desc: "Addresses the expression of a necessity or obligation in the past, detailing its proper use with the Did auxiliary for questions and negatives.", imageCount: 5 },
+    { id: 41, phase: "Phase V", title: "Class 41: Used to (Past Habit)", desc: "Teaches the structure Used to as the definitive way to express a repeated habit or action that is no longer performed.", imageCount: 5 },
+
+    // --- Phase VI: Synthesis, Tenses, and Voice ---
+    { id: 42, phase: "Phase VI", title: "Class 42: The 12 Tenses Matrix", desc: "Provides a unified cognitive map of the English verbal system, categorizing all twelve tenses by time and aspect (Simple, Continuous, Perfect).", imageCount: 5 },
+    { id: 43, phase: "Phase VI", title: "Class 43: 12 Tenses Application", desc: "Drills the practical conjugation of a single verb across all twelve tenses to consolidate the learner's understanding of the full system.", imageCount: 5 },
+    { id: 44, phase: "Phase VI", title: "Class 44: Active Voice & Passive Voice", desc: "Introduces the concept of voice transformation, providing the essential five rules and mapping auxiliary conversion for eight tenses.", imageCount: 5 },
+    { id: 45, phase: "Phase VI", title: "Class 45: Be with P.P. Form and Special Verbs", desc: "The final lesson, which serves as a master key, ensures comprehensive control over expressing static states within all modal and auxiliary contexts (e.g., Must be, Have been, Able to be).", imageCount: 11 }
+];
+
+
+// --- 45-Day Hindi Curriculum (Optimized for Telugu Speakers) ---
+const HINDI_CURRICULUM = [
+    // --- Phase 1: Basics & Vocabulary (పునాది మరియు పదజాలం) ---
+    { id: 1, title: "Day 01: అక్షరమాల (Alphabet)", desc: "హిందీ అచ్చులు, హల్లులు మరియు తెలుగు వారి ఉచ్చారణ దోషాలను సరిదిద్దడం.", imageCount: 2 },
+    { id: 2, title: "Day 02: పరిచయం (Self Intro)", desc: "పేరు చెప్పడం, ఊరు చెప్పడం, సాధారణ పలకరింపులు (నమస్తే, శుభోదయం).", imageCount: 2 },
+    { id: 3, title: "Day 03: సర్వనామాలు-1 (Pronouns)", desc: "మై (నేను), హమ్ (మేము), తూ/తుమ్/ఆప్ (నువ్వు/మీరు) వాడకం.", imageCount: 2 },
+    { id: 4, title: "Day 04: సర్వనామాలు-2 (Pronouns)", desc: "యహ్ (ఇది/వీరు), వహ్ (అది/వారు), ఏ, వే మధ్య తేడాలు.", imageCount: 2 },
+    { id: 5, title: "Day 05: సహాయక క్రియలు (Helpers)", desc: "హూఁ, హై, హో, హైం (ఉన్నాను, ఉన్నాడు, ఉన్నావు, ఉన్నారు) వాడకం.", imageCount: 2 },
+    { id: 6, title: "Day 06: ముఖ్యమైన క్రియలు-1 (Verbs)", desc: "నిత్య జీవితంలో వాడే 20 ముఖ్యమైన క్రియలు (తినడం, తాగడం, వెళ్ళడం..).", imageCount: 3 },
+    { id: 7, title: "Day 07: ముఖ్యమైన క్రియలు-2 (Verbs)", desc: "చూడటం, వినడం, మాట్లాడటం వంటి క్రియల జాబితా.", imageCount: 3 },
+    { id: 8, title: "Day 08: ఆజ్ఞలు (Imperatives)", desc: "రండి, వెళ్ళండి, కూర్చోండి (తుమ్ vs ఆప్) అని గౌరవంగా చెప్పడం.", imageCount: 2 },
+    { id: 9, title: "Day 09: నిషేధాలు (Negatives)", desc: "నహీ, మత్ (వద్దు, లేదు, కాదు) పదాల ప్రయోగం.", imageCount: 2 },
+    { id: 10, title: "Day 10: ప్రశ్న పదాలు (WH Words)", desc: "క్యా (ఏమిటి), కబ్ (ఎప్పుడు), కహా (ఎక్కడ), క్యూ (ఎందుకు) మొదలైనవి.", imageCount: 2 },
+
+    // --- Phase 2: Present Tense & Gender (వర్తమాన కాలం & లింగ బేధాలు) ---
+    { id: 11, title: "Day 11: లింగ బేధాలు (Gender)", desc: "స్త్రీలింగం vs పుల్లింగం పదాలను గుర్తించడం (వస్తువులకు కూడా).", imageCount: 2 },
+    { id: 12, title: "Day 12: సామాన్య వర్తమానం (Male)", desc: "'నేను వెళ్తాను', 'అతను తింటాడు' (తా హూఁ/హై) - పురుషులకు.", imageCount: 3 },
+    { id: 13, title: "Day 13: సామాన్య వర్తమానం (Female)", desc: "'నేను వెళ్తాను', 'ఆమె తింటుంది' (తీ హూఁ/హై) - స్త్రీలకు.", imageCount: 3 },
+    { id: 14, title: "Day 14: దినచర్య (Daily Routine)", desc: "ఉదయం నుండి రాత్రి వరకు చేసే పనులను హిందీలో చెప్పడం.", imageCount: 2 },
+    { id: 15, title: "Day 15: తత్కాలిక వర్తమానం (Continuous)", desc: "'నేను వెళ్తున్నాను' (రహా హూఁ / రహీ హూఁ) ప్రయోగం.", imageCount: 3 },
+    { id: 16, title: "Day 16: విశేషణాలు (Adjectives)", desc: "మంచి, చెడు, కొత్త - లింగాన్ని బట్టి మారుట (అచ్చా/అచ్ఛీ).", imageCount: 2 },
+    { id: 17, title: "Day 17: సంబంధ కారకాలు (Possessives)", desc: "నా యొక్క, నీ యొక్క (మేరా/మేరీ, తుమ్హారా/తుమ్హారీ) వాడకం.", imageCount: 2 },
+    { id: 18, title: "Day 18: బంధుత్వాలు (Relations)", desc: "కుటుంబ సభ్యుల పేర్లు (మాతా, పితా, భాయ్, బహన్, చాచా..).", imageCount: 2 },
+    { id: 19, title: "Day 19: సంఖ్యలు & సమయం (Time)", desc: "1-100 సంఖ్యలు, సమయం అడగడం మరియు చెప్పడం.", imageCount: 2 },
+    { id: 20, title: "Day 20: రివిజన్ (Small Talk)", desc: "ఇప్పటివరకు నేర్చుకున్న టాపిక్స్ పై చిన్న చిన్న మాటలు కలపడం.", imageCount: 2 },
+
+    // --- Phase 3: Past Tense & 'Ne' Rule (భూతకాలం & 'నే' ప్రయోగం) ---
+    { id: 21, title: "Day 21: సాధారణ భూతకాలం (Past Male)", desc: "కర్మ లేని క్రియలు (వెళ్ళాను, వచ్చాను - గయా/ఆయా) - పుల్లింగం.", imageCount: 3 },
+    { id: 22, title: "Day 22: సాధారణ భూతకాలం (Past Female)", desc: "వెళ్ళింది/వెళ్ళారు (గయీ/గయే) - స్త్రీలింగం మరియు బహువచనం.", imageCount: 3 },
+    { id: 23, title: "Day 23: 'నే' ప్రయోగం (Ne Rule Intro)", desc: "సకర్మక క్రియలకు (తిన్నాను, చూశాను) 'నే' ఎందుకు వాడాలి?", imageCount: 3 },
+    { id: 24, title: "Day 24: 'నే' ప్రాక్టీస్-1 (Ne Male)", desc: "పుల్లింగ కర్మతో వాక్యాలు (మైనే ఫల్ ఖాయా - నేను పండు తిన్నాను).", imageCount: 3 },
+    { id: 25, title: "Day 25: 'నే' ప్రాక్టీస్-2 (Ne Female)", desc: "స్త్రీలింగ కర్మతో వాక్యాలు (రామ్ నే రోటీ ఖాయీ - రామ్ రోటీ తిన్నాడు).", imageCount: 3 },
+    { id: 26, title: "Day 26: పాస్ట్ కంటిన్యూయస్ (Past Cont.)", desc: "'వెళ్తూ ఉంటిని' (రహా థా / రహీ థీ).", imageCount: 3 },
+    { id: 27, title: "Day 27: ప్రెజెంట్ పర్ఫెక్ట్ (Perfect)", desc: "'ఇప్పుడే వచ్చాను', 'చేసేశాను' (చుకా హూఁ / లియా హై).", imageCount: 3 },
+    { id: 28, title: "Day 28: ఫ్యూచర్ టెన్స్ (Future Male)", desc: "'నేను వస్తాను' (ఆవూంగా/జావూంగా) - పురుషులకు.", imageCount: 3 },
+    { id: 29, title: "Day 29: ఫ్యూచర్ టెన్స్ (Future Female)", desc: "'నేను వస్తాను' (ఆవూంగీ/జావూంగీ) - స్త్రీలకు.", imageCount: 3 },
+    { id: 30, title: "Day 30: కాలాల పోలిక (Tense Mix)", desc: "ఒకే వాక్యాన్ని మూడు కాలాల్లోకి మార్చడం (వర్తమాన, భూత, భవిష్యత్).", imageCount: 3 },
+
+    // --- Phase 4: Prepositions & Structure (విభక్తులు & వాక్య నిర్మాణం) ---
+    { id: 31, title: "Day 31: విభక్తులు-1 (Prepositions)", desc: "మే (లో), పర్ (మీద), సే (నుండి/తో).", imageCount: 2 },
+    { id: 32, title: "Day 32: విభక్తులు-2 (Prepositions)", desc: "కో (కి/కు), కే లియే (కోసం), కే సాథ్ (తో).", imageCount: 2 },
+    { id: 33, title: "Day 33: కావాలి (Want/Chahiye)", desc: "నాకు కావాలి (ముఝే చాహియే) వాక్య నిర్మాణం.", imageCount: 2 },
+    { id: 34, title: "Day 34: గలను (Can/Sakta)", desc: "నేను చేయగలను (మై కర్ సక్తా హూఁ) వాడకం.", imageCount: 2 },
+    { id: 35, title: "Day 35: చేయాలి (Must/Padega)", desc: "కచ్చితంగా చేయాలి (కర్నా పడేగా/హోగా) వాడకం.", imageCount: 2 },
+    { id: 36, title: "Day 36: సముచ్చయాలు (Conjunctions)", desc: "ఔర్ (మరియు), లేకిన్ (కానీ), క్యూంకి (ఎందుకంటే).", imageCount: 2 },
+    { id: 37, title: "Day 37: పోలికలు (Comparisons)", desc: "దానికంటే ఇది మంచిది (ఇస్ సే వహ్ అచ్చా హై).", imageCount: 2 },
+    { id: 38, title: "Day 38: పదాల మార్పు (Oblique Case)", desc: "విభక్తి వచ్చినప్పుడు పదం మారే తీరు (లడ్కా + కో = లడ్కే కో).", imageCount: 3 },
+    { id: 39, title: "Day 39: అడ్వాన్స్‌డ్ ప్రశ్నలు (Q&A)", desc: "వివరంగా సమాచారం రాబట్టే ప్రశ్నలు (ఎంతసేపు, ఎప్పటినుండి).", imageCount: 2 },
+    { id: 40, title: "Day 40: పెద్ద వాక్యాలు (Complex Sent.)", desc: "రెండు మూడు చిన్న వాక్యాలను కలిపి పెద్ద వాక్యంగా మార్చడం.", imageCount: 2 },
+
+    // --- Phase 5: Conversations & Fluency (సంభాషణలు) ---
+    { id: 41, title: "Day 41: మార్కెట్/షాపింగ్ (Role Play)", desc: "ధరలు అడగడం, బేరమాడటం.", imageCount: 2 },
+    { id: 42, title: "Day 42: ప్రయాణం (Travel)", desc: "ఆటో/క్యాబ్ మాట్లాడటం, దారి అడగడం.", imageCount: 2 },
+    { id: 43, title: "Day 43: ఆరోగ్యం/డాక్టర్ (Health)", desc: "ఆరోగ్యం బాగోలేనప్పుడు వివరించడం.", imageCount: 2 },
+    { id: 44, title: "Day 44: కథ చెప్పడం (Story)", desc: "చిన్న కథను మీ సొంత మాటల్లో చెప్పడం (ప్రాక్టీస్).", imageCount: 2 },
+    { id: 45, title: "Day 45: ముగింపు & టిప్స్ (Final)", desc: "ఫ్లూయెన్సీ పెంచుకోవడానికి చిట్కాలు & రివిజన్.", imageCount: 1 }
+];
+
+
+
 
         let currentlySpeakingText = null;
         const stopAudio = () => {
@@ -244,35 +562,61 @@
             currentlySpeakingText = null;
         };
 
-        // --- API రేట్ లిమిటింగ్ లాజిక్ మళ్లీ జోడించబడింది ---
-        let lastRequestTimestamp = parseInt(localStorage.getItem('last_req_time') || '0');
-        let requestCount = parseInt(localStorage.getItem('req_count_10m') || '0');
-        let reqResetTime = parseInt(localStorage.getItem('req_reset_time') || Date.now().toString());
-        
-        // 10 RPM (6s/req). 9 RPM సురక్షితంగా ఉండటానికి (6.67s/req). 7000ms ఉపయోగిస్తున్నాం.
-        const RATE_LIMIT_DELAY = 7000; 
+            // --- 1. MODEL CONFIGURATION (UPDATED) ---
+    const MODEL_CONFIG = {
+        "gemini-2.5-flash-lite": { 
+            label: "Gemini 2.5 Flash-Lite (Recommended)", 
+            limit: 20, // రోజుకు 20 (Free & Fast)
+            delay: 12000, // 12 సెకన్లు చాలు
+            desc: "Best for Learning & Roleplay" 
+        },
+        "gemini-2.5-flash": { 
+            label: "Gemini 2.5 Flash (New)", 
+            limit: 20,   // రోజుకు 20 మాత్రమే (Strict Limit)
+            delay: 12000, // 12 సెకన్లు ఆగాలి
+            desc: "High Intelligence but Low Limit" 
+        },
+        "gemini-2.0-flash-exp": { 
+            label: "Gemini 2.0 Flash (Exp)", 
+            limit: 20,   // రోజుకు 20 మాత్రమే
+            delay: 12000, 
+            desc: "Experimental Version" 
+        }
+    };
 
-        const checkRateLimit = async (onWait) => {
-            const now = Date.now();
-            const timeSinceLast = now - lastRequestTimestamp;
-            if (timeSinceLast < RATE_LIMIT_DELAY) {
-                const wait = RATE_LIMIT_DELAY - timeSinceLast;
-                if(onWait) onWait(Math.ceil(wait/1000)); // సెకన్లలో వెయిట్ టైమ్ చూపించు
-                await new Promise(r => setTimeout(r, wait));
-            }
-            // 10 నిమిషాల కౌంటర్‌ (ఇది RPM కంటే భిన్నమైనది, కానీ ఉంచబడింది)
-            if (now - reqResetTime > 10 * 60 * 1000) { 
-                requestCount = 0;
-                reqResetTime = now;
-            }
-            requestCount++;
-            lastRequestTimestamp = Date.now(); // చివరి అభ్యర్థన సమయాన్ని అప్‌డేట్ చేయండి
-            localStorage.setItem('last_req_time', lastRequestTimestamp.toString());
-            localStorage.setItem('req_count_10m', requestCount.toString());
-            localStorage.setItem('req_reset_time', reqResetTime.toString());
-            return requestCount; 
-        };
-        // --- రేట్ లిమిటింగ్ లాజిక్ ముగిసింది ---
+    // --- 2. SMART RATE LIMIT LOGIC ---
+    let lastRequestTimestamp = 0;
+
+    const checkRateLimit = async (modelId, onWait) => {
+        // ఒకవేళ modelId లేకపోతే లేదా తప్పుగా ఉంటే Default గా 2.5-Flash-lite తీసుకుంటుంది
+        const config = MODEL_CONFIG[modelId] || MODEL_CONFIG["gemini-2.5-flash-lite"];
+        
+        const delayTime = config.delay || 12000;
+        const dailyLimit = config.limit || 20;
+
+        // A. SPEED CHECK
+        const now = Date.now();
+        const timeSinceLast = now - lastRequestTimestamp;
+        if (timeSinceLast < delayTime) {
+            const wait = delayTime - timeSinceLast;
+            if(onWait) onWait(Math.ceil(wait/1000));
+            await new Promise(r => setTimeout(r, wait));
+        }
+        lastRequestTimestamp = Date.now();
+
+        // B. DAILY QUOTA CHECK
+        const todayDate = new Date().toISOString().split('T')[0];
+        const storageKey = `usage_${modelId}_${todayDate}`;
+        let currentUsage = parseInt(localStorage.getItem(storageKey) || '0');
+
+        if (currentUsage >= dailyLimit) {
+            throw new Error(`Daily Limit Reached (${currentUsage}/${dailyLimit}) for ${config.label}. Please switch to 'gemini-2.5-flash-lite' in Settings.`);
+        }
+
+        localStorage.setItem(storageKey, (currentUsage + 1).toString());
+        return currentUsage + 1;
+    };
+
 
 
         const shuffleQuizData = (quizArray) => {
@@ -291,15 +635,38 @@
             });
         };
 
-        // apiKey మరియు onWait పారామీటర్లు జోడించబడ్డాయి
+                // apiKey మరియు onWait పారామీటర్లు జోడించబడ్డాయి
         const generateLessonContent = async (apiKey, modelId, lessonInfo, qCount, prefLang, onWait) => {
-            await checkRateLimit(onWait); // రేట్ లిమిట్ కోసం ఆగు
+            await checkRateLimit(modelId, onWait);
             
+            // 1. CHECK FOR STATIC DATA (Only for English Mode)
+            // మనం రాసిన static_data.js లో ఈ లెసన్ ఉందో లేదో చూస్తుంది
+            let staticData = null;
+            if (prefLang === 'en' && window.STATIC_ENGLISH_DATA) {
+                staticData = window.STATIC_ENGLISH_DATA[lessonInfo.id] || window.STATIC_ENGLISH_DATA[String(lessonInfo.id)];
+            }
+
             let prompt = "";
             let conceptsFormat = "";
             let quizFormat = "";
 
-            if (prefLang === 'en') {
+            // --- SCENARIO A: HYBRID MODE (Manual Concepts + AI Quiz) ---
+            if (prefLang === 'en' && staticData) {
+                console.log("Using Hybrid Mode: Manual Concepts + AI Quiz");
+                // ఇక్కడ మనం AI ని కేవలం క్విజ్ మాత్రమే అడుగుతున్నాం. కాన్సెప్ట్స్ మన దగ్గర ఉన్నాయి.
+                quizFormat = `"quizEnglish": [{"question": "...", "options": ["A", "B", "C", "D"], "correct": 0, "explanation": "Concise 1-line Telugu logic."}]`;
+                prompt = `
+                    Create a QUIZ for English lesson: "${lessonInfo.title}".
+                    Context: The user learned about: ${JSON.stringify(staticData.concepts.map(c => c.title))}.
+                    REQUIREMENTS:
+                    1. Generate exactly ${qCount} English Questions based on the topic.
+                    2. NO concepts needed (I have them).
+                    3. Explanation must be in Telugu.
+                    Output VALID JSON ONLY: { ${quizFormat} }
+                `;
+            } 
+            // --- SCENARIO B: FULL AI MODE (If no static data) ---
+            else if (prefLang === 'en') {
                 conceptsFormat = `"concepts": [{"title": "Concept Name", "explanation": "Concise Telugu explanation...", "examples": [{"te": "...", "en": "..."}, {"te": "...", "en": "..."}]}]`;
                 quizFormat = `"quizEnglish": [{"question": "...", "options": ["A", "B", "C", "D"], "correct": 0, "explanation": "Concise 1-line Telugu logic."}]`;
                 prompt = `
@@ -311,7 +678,9 @@
                     4. TOKEN LIMIT: Keep ALL explanations **CONCISE (1-2 lines)**.
                     Output VALID JSON ONLY: { "teluguTitle": "...", ${conceptsFormat}, ${quizFormat} }
                 `;
-            } else {
+            } 
+            // --- SCENARIO C: HINDI MODE (Full AI) ---
+            else {
                 conceptsFormat = `"concepts": [{"title": "Concept Name (EnglishName / हिंदीनाम)", "explanation": "Concise Telugu explanation...", "examples": [{"te": "...", "hi": "..."}, {"te": "...", "hi": "..."}]}]`;
                 quizFormat = `"quizHindi": [{"question": "...", "options": ["A", "B", "C", "D"], "correct": 0, "explanation": "Concise 1-line Telugu logic."}]`;
                 prompt = `
@@ -326,7 +695,6 @@
             }
 
             try {
-                // key="" నుండి key=${apiKey}కి మార్చబడింది
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -341,8 +709,18 @@
                     throw new Error("Model Overloaded. Try reducing Qs or wait.");
                 }
 
-                let text = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
+                let text = data.candidates[0].content.parts[0].text;
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                if (jsonMatch) text = jsonMatch[0];
+                
                 let parsedData = JSON.parse(text);
+
+                // MERGE LOGIC: స్టాటిక్ డేటా ఉంటే, దాన్ని AI క్విజ్ తో కలుపుతున్నాం
+                if (prefLang === 'en' && staticData) {
+                    parsedData.concepts = staticData.concepts; // మన స్టాటిక్ కాన్సెప్ట్స్
+                    parsedData.teluguTitle = lessonInfo.title; // టైటిల్
+                    // parsedData.quizEnglish ఆల్రెడీ AI నుండి వచ్చింది
+                }
 
                 if (parsedData.quizEnglish) parsedData.quizEnglish = shuffleQuizData(parsedData.quizEnglish);
                 if (parsedData.quizHindi) parsedData.quizHindi = shuffleQuizData(parsedData.quizHindi);
@@ -358,9 +736,10 @@
             }
         };
 
+
         // apiKey మరియు onWait పారామీటర్లు జోడించబడ్డాయి
         const callGeminiChat = async (apiKey, modelId, scenarioPrompt, userText, chatLang, onWait) => {
-            await checkRateLimit(onWait); // రేట్ లిమిట్ కోసం ఆగు
+            await checkRateLimit(modelId, onWait); // రేట్ లిమిట్ కోసం ఆగు
             const targetLang = chatLang === 'en' ? 'English' : 'Hindi';
             
             const prompt = `
@@ -414,9 +793,23 @@
             const [view, setView] = useState('home'); 
             // apiKey స్టేట్ మళ్లీ జోడించబడింది
             const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
-            const [modelId, setModelId] = useState(localStorage.getItem('gemini_model_id') || 'gemini-2.5-flash');
+            const [modelId, setModelId] = useState(localStorage.getItem('gemini_model_id') || 'gemini-2.5-flash-lite');
             const [showSettings, setShowSettings] = useState(false);
-            
+
+                        // --- ONLINE/OFFLINE STATE ---
+            const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+            useEffect(() => {
+                const handleOnline = () => setIsOnline(true);
+                const handleOffline = () => setIsOnline(false);
+                window.addEventListener('online', handleOnline);
+                window.addEventListener('offline', handleOffline);
+                return () => {
+                    window.removeEventListener('online', handleOnline);
+                    window.removeEventListener('offline', handleOffline);
+                }
+            }, []);
+
             // FIX 1: Removed usageLevel state (ఇది ముందే తీసివేయబడింది)
             
             const [selectedLesson, setSelectedLesson] = useState(null);
@@ -443,8 +836,95 @@
             console.log(`Install prompt was: ${result.outcome}`);
             setInstallPrompt(null);
         };
-            const [theme, setTheme] = useState(localStorage.getItem('speakpro_theme') || 'system');
+            const [theme, setTheme] = useState(localStorage.getItem('spokenpro_theme') || 'system');
             
+            // --- IMAGE MODAL STATES (SWIPE & ZOOM) ---
+            const [imageModalOpen, setImageModalOpen] = useState(false);
+            const [activeImageIndex, setActiveImageIndex] = useState(0);
+            const [scale, setScale] = useState(1);
+            const [translate, setTranslate] = useState({ x: 0, y: 0 });
+            const [isDragging, setIsDragging] = useState(false);
+            const [lastTap, setLastTap] = useState(0);
+            const [showControls, setShowControls] = useState(true); 
+            const dragStart = useRef({ x: 0, y: 0 });
+            const imgRef = useRef(null);
+
+            const openImageModal = (index) => {
+                setActiveImageIndex(index);
+                setImageModalOpen(true);
+                setScale(1); setTranslate({ x: 0, y: 0 }); setShowControls(true);
+            };
+
+            const closeImageModal = () => { setImageModalOpen(false); };
+
+            const toggleControls = () => {
+                if (!isDragging && scale === 1) setShowControls(prev => !prev);
+            };
+
+            const nextImage = () => {
+                if (activeImageIndex < selectedLesson.imageCount - 1) {
+                    setActiveImageIndex(prev => prev + 1);
+                    setScale(1); setTranslate({ x: 0, y: 0 });
+                }
+            };
+
+            const prevImage = () => {
+                if (activeImageIndex > 0) {
+                    setActiveImageIndex(prev => prev - 1);
+                    setScale(1); setTranslate({ x: 0, y: 0 });
+                }
+            };
+
+            // TOUCH HANDLERS (Swipe & Zoom Logic)
+            const handleTouchStart = (e) => {
+                const now = Date.now();
+                const touch = e.touches[0];
+                dragStart.current = { x: touch.clientX, y: touch.clientY }; 
+                
+                if (now - lastTap < 300) {
+                    handleDoubleTap(e);
+                } else {
+                    if (scale > 1) setIsDragging(true);
+                }
+                setLastTap(now);
+            };
+
+            const handleDoubleTap = (e) => {
+                if (scale > 1) {
+                    setScale(1); setTranslate({ x: 0, y: 0 });
+                    setShowControls(true);
+                } else {
+                    const touch = e.touches ? e.touches[0] : e;
+                    const rect = e.target.getBoundingClientRect();
+                    const offsetX = touch.clientX - rect.left - (rect.width / 2);
+                    const offsetY = touch.clientY - rect.top - (rect.height / 2);
+                    setScale(3);
+                    setTranslate({ x: -offsetX * 2, y: -offsetY * 2 });
+                    setShowControls(false); 
+                }
+            };
+
+            const handleTouchMove = (e) => {
+                if (!isDragging || scale === 1) return;
+                e.preventDefault(); 
+                const touch = e.touches[0];
+                const newX = touch.clientX - dragStart.current.x;
+                const newY = touch.clientY - dragStart.current.y;
+                setTranslate({ x: newX, y: newY });
+            };
+
+            const handleTouchEnd = (e) => {
+                setIsDragging(false);
+                if (scale === 1) {
+                    const touchEnd = e.changedTouches[0].clientX;
+                    const diff = dragStart.current.x - touchEnd;
+                    if (Math.abs(diff) > 50) { // Swipe detection
+                        if (diff > 0) nextImage(); // Swipe Left
+                        else prevImage(); // Swipe Right
+                    }
+                }
+            };
+
             const chatContainerRef = useRef(null);
             
             useEffect(() => {
@@ -463,7 +943,7 @@
                 } else {
                     root.classList.remove('dark');
                 }
-                localStorage.setItem('speakpro_theme', theme);
+                localStorage.setItem('SpokenPro_theme', theme);
                 
                 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
                 const handleChange = (e) => {
@@ -481,28 +961,43 @@
             useEffect(() => { if (waitTime > 0) { const t = setTimeout(() => setWaitTime(w => w - 1), 1000); return () => clearTimeout(t); } }, [waitTime]);
             useEffect(() => { if (chatContainerRef.current) chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight; }, [messages]);
             
-            // FIX 1: Removed usageLevel useEffect (ఇది ముందే తీసివేయబడింది)
-
-            const speak = (text, lang) => {
+                        // --- UPDATED SPEAK FUNCTION (కొత్త కోడ్) ---
+                        const speak = (text, lang) => {
                 if (isMuted || !text) return; 
                 if (!window.speechSynthesis) return;
+                
                 if (window.speechSynthesis.speaking && text === currentlySpeakingText) { stopAudio(); return; }
                 stopAudio();
+
+                // మార్పు: బ్రాకెట్ ఓపెన్ కాగానే మరియు క్లోజ్ కాగానే " . . . " (చుక్కలు) పెడుతున్నాం.
+                // దీనివల్ల కంప్యూటర్ అక్కడ కాసేపు ఆగుతుంది.
                 const cleanText = text
-                    .replace(/[*_#`]/g, '')
-                    .replace(/[\(\[].*?[\)\]]/g, '')
-                    .replace(/-/g, ' ')
+                    .replace(/\(/g, '. . . ') 
+                    .replace(/\)/g, ' . . . ')    
+                    .replace(/[*_#`~@]/g, '')   
+                    .replace(/\|/g, ' ')        
+                    .replace(/-/g, ' ')         
+                    .replace(/\//g, ' or ')
+                    .replace(/[\[\]]/g, ' ')  
                     .replace('Correct (సరైన వాక్యం):', '')
-                    .replace('సవరణ (Correction):', '');
+                    .replace('సవరణ (Correction):', '')
+                    .replace(/\s+/g, ' ').trim();
+
                 const utterance = new SpeechSynthesisUtterance(cleanText);
+                
                 if (lang === 'te') utterance.lang = 'te-IN';
                 else if (lang === 'hi') utterance.lang = 'hi-IN';
                 else utterance.lang = 'en-US';
-                utterance.rate = 0.9;
+                
+                utterance.rate = 0.85; // కొంచెం నెమ్మదిగా ఉంటే స్పష్టంగా ఉంటుంది
+                utterance.pitch = 1.0; 
+
                 utterance.onstart = () => { currentlySpeakingText = text; };
                 utterance.onend = () => { currentlySpeakingText = null; };
+                
                 window.speechSynthesis.speak(utterance);
             };
+
 
             const saveSettings = () => {
                 // apiKey సేవ్ లాజిక్ మళ్లీ జోడించబడింది
@@ -511,28 +1006,71 @@
                 setShowSettings(false);
             };
 
-            const handleStartLesson = async (lesson, forceRefresh = false) => {
-                if (!apiKey) { setShowSettings(true); return; } // apiKey చెక్ మళ్లీ జోడించబడింది
+                                                            const handleStartLesson = async (lesson, forceRefresh = false) => {
+                // రీసెట్ చేస్తున్నాం
                 setLessonData(null);
                 setSelectedLesson(lesson);
-                setLoading(true); setWaitTime(0); setError(null); // setWaitTime(0) మళ్లీ జోడించబడింది
+                setLoading(true); setWaitTime(0); setError(null);
                 
+                // 1. స్టాటిక్ డేటా (Offline Data) ఉందేమో చెక్ చేయడం
+                // గమనిక: ఇక్కడ prefLang === 'en' అని పెట్టాం. అంటే ఇంగ్లీష్ అయితేనే స్టాటిక్ డేటా వెతుకుతుంది.
+                // హిందీ అయితే వెతకదు (null వస్తుంది).
+                const staticData = (prefLang === 'en' && window.STATIC_ENGLISH_DATA) 
+                    ? (window.STATIC_ENGLISH_DATA[lesson.id] || window.STATIC_ENGLISH_DATA[String(lesson.id)]) 
+                    : null;
+
+                // 2. ఆఫ్ లైన్ మోడ్ (కీ లేకపోయినా, డేటా ఉంటే ఓపెన్ చెయ్యి - కేవలం ఇంగ్లీష్ కి మాత్రమే ఇది జరుగుతుంది)
+                if (staticData && !apiKey) {
+                    console.log("Offline Mode: Loading Static Data without API Key");
+                    
+                    const offlineData = {
+                        teluguTitle: lesson.title, 
+                        concepts: staticData.concepts, // మన స్టాటిక్ కాన్సెప్ట్స్
+                        quizEnglish: [], // కీ లేదు కాబట్టి క్విజ్ రాదు
+                        quizHindi: []
+                    };
+
+                    // టీచర్స్ నోట్స్ కలపడం
+                    const localNote = window.CLASS_NOTES?.[lesson.id] || window.CLASS_NOTES?.[String(lesson.id)];
+                    if(localNote) offlineData.rawNote = localNote;
+
+                    setLessonData(offlineData);
+                    setLoading(false);
+                    setView('lesson');
+                    return; // ఇక్కడితో ఆపేస్తుంది (AI ని పిలవదు)
+                }
+
+                // 3. కీ చెకింగ్ (హిందీ కోసం లేదా ఇంగ్లీష్ క్విజ్ కోసం)
+                // పైన కండిషన్ ఫెయిల్ అయితే (అంటే హిందీ అనుకోండి), ఇక్కడికి వస్తుంది.
+                // అప్పుడు కీ లేకపోతే సెట్టింగ్స్ అడుగుతుంది.
+                if (!apiKey) { 
+                    setShowSettings(true); 
+                    setLoading(false); 
+                    return; 
+                }
+
+                // 4. API కాలింగ్ (Online Mode)
                 try {
-                    const cacheKey = `speakpro_v10_l${lesson.id}_q${prefQCount}_${prefLang}`;
+                    const cacheKey = `spokenpro_v10_l${lesson.id}_q${prefQCount}_${prefLang}`;
                     let data = localStorage.getItem(cacheKey);
+                    
                     if (!forceRefresh && data) {
                         await new Promise(r => setTimeout(r, 300));
                         data = JSON.parse(data);
                     } else {
-                        // apiKey మరియు onWait కాల్‌బ్యాక్ జోడించబడింది
+                        // ఇంగ్లీష్ అయితే Hybrid, హిందీ అయితే Full AI
                         data = await generateLessonContent(apiKey, modelId, lesson, prefQCount, prefLang, (t) => setWaitTime(t));
                         localStorage.setItem(cacheKey, JSON.stringify(data));
                     }
-                    if (!data.concepts) throw new Error("AI Error: Data concepts missing.");
+                    
+                    const localNote = window.CLASS_NOTES?.[lesson.id] || window.CLASS_NOTES?.[String(lesson.id)];
+                    if(localNote) data.rawNote = localNote; 
+                    
                     setLessonData(data);
                     setView('lesson');
                 } catch (e) { setError(e.message); } finally { setLoading(false); }
             };
+
             
             const startQuiz = () => {
                 setQuizState({ index: 0, score: 0, answered: false, selected: null, isCorrect: false, history: [] });
@@ -614,7 +1152,21 @@
                     {/* FIX 1: Removed usage bar */}
                     <div className="flex justify-between items-center mb-8 relative z-10 pt-4"> {/* Added pt-4 for spacing */ }
                         {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
-                        <h1 className="text-2xl font-bold flex items-center gap-2 drop-shadow-sm"><i className="ph ph-student text-blue-600 bg-white/50 p-1 rounded-lg"></i> SpeakPro</h1>
+                        <h1 className="text-2xl font-bold flex items-center gap-3 drop-shadow-sm select-none">
+    {/* SpokenPro Logo Code (SVG) */}
+    <div className="bg-white/50 p-1.5 rounded-xl border border-white/40 shadow-sm">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* బ్లూ బబుల్ (Blue Outline) */}
+            <path d="M21 7C21 4.23858 18.7614 2 16 2H7C4.23858 2 2 4.23858 2 7V15C2 17.7614 4.23858 20 7 20H8V23L13 20H16C18.7614 20 21 17.7614 21 15V7Z" 
+                  stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            
+            {/* ఎల్లో స్టార్ (Yellow Star) */}
+            <path d="M11.5 6L12.8 9.2L16 10.5L12.8 11.8L11.5 15L10.2 11.8L7 10.5L10.2 9.2L11.5 6Z" 
+                  stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    </div>
+    SpokenPro
+</h1>
                         <div className="flex gap-3">
                              {/* FIX 2: పాత మ్యూట్ బటన్‌ను కొత్త కాంపోనెంట్‌తో భర్తీ చేయండి */}
                              <MuteButton />
@@ -627,33 +1179,48 @@
                              <button onClick={() => setShowSettings(true)} className={`glass-card p-2.5 rounded-full hover:bg-white active:scale-95 transition-all ${apiKey ? '' : 'text-amber-600 animate-bounce'}`}><i className="ph ph-gear text-xl"></i></button>
                         </div>
                     </div>
-                    {showSettings && (
+                                                                                {showSettings && (
                         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-slide-in">
                             <div className="glass-panel p-6 rounded-2xl w-full max-w-sm relative">
-                                <button onClick={() => setShowSettings(false)} className="absolute top-3 right-3 text-gray-500 dark:text-gray-400"><i className="ph ph-x text-lg"></i></button>
-                                {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
-                                <h3 className="font-bold text-lg mb-4">Settings</h3>
-                                {/* FIX 3: text-black залишено, ఇది input కోసం అవసరం */}
-                                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Paste API Key" className="glass-input w-full p-3 rounded-xl text-sm mb-3 text-black outline-none focus:ring-2 focus:ring-blue-400 dark:text-white dark:placeholder-slate-400" />
-                                {/* FIX 3: text-black залишено, ఇది input కోసం అవసరం */}
-                                <input type="text" value={modelId} onChange={e => setModelId(e.target.value)} placeholder="Model Name" className="glass-input w-full p-3 rounded-xl text-sm mb-4 text-black outline-none focus:ring-2 focus:ring-blue-400 dark:text-white dark:placeholder-slate-400" />
+                                <button onClick={() => setShowSettings(false)} className="absolute top-3 right-3 text-gray-500"><i className="ph ph-x text-lg"></i></button>
+                                <h3 className="font-bold text-lg mb-4 text-black dark:text-white">Settings</h3>
                                 
+                                {/* API Key Input */}
+                                <label className="text-xs font-bold text-gray-500 mb-1 block">API Key</label>
+                                <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Paste Gemini API Key" className="glass-input w-full p-3 rounded-xl text-sm mb-4 text-black outline-none focus:ring-2 focus:ring-blue-400 dark:text-white" />
+                                
+                                {/* NEW: Model Selection Dropdown (ఇది కొత్తది) */}
+                                <label className="text-xs font-bold text-gray-500 mb-1 block">Select AI Model</label>
+                                <div className="space-y-2 mb-4">
+                                    {Object.keys(MODEL_CONFIG).map((key) => (
+                                        <button 
+                                            key={key} 
+                                            onClick={() => setModelId(key)}
+                                            className={`w-full p-3 rounded-xl text-left border transition-all ${modelId === key ? 'bg-blue-100 border-blue-500 ring-1 ring-blue-500 dark:bg-blue-900/40' : 'bg-white/50 border-gray-200 hover:bg-white dark:bg-slate-800 dark:border-slate-700'}`}
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <span className="font-bold text-sm text-black dark:text-white">{MODEL_CONFIG[key].label}</span>
+                                                {modelId === key && <i className="ph ph-check-circle text-blue-600"></i>}
+                                            </div>
+                                            <div className="text-xs text-gray-500 mt-1 dark:text-gray-400">
+                                                Limit: <b>{MODEL_CONFIG[key].limit}/day</b> • {MODEL_CONFIG[key].desc}
+                                            </div>
+                                        </button>
+                                    ))}
+                                    
+                                    {/* Custom Model Option */}
+                                    <button onClick={() => { const m = prompt("Enter Custom Model Name:", "gemini-1.5-pro"); if(m) setModelId(m); }} className="text-xs text-blue-600 underline text-center w-full mt-2">
+                                        Use Custom Model ID
+                                    </button>
+                                </div>
+
+                                {/* Theme Toggle (ఇది కూడా ఇక్కడే ఉంది) */}
                                 <div className="mb-4">
-                                    {/* FIX 3: text-black మరియు dark:text-slate-300 తీసివేయబడింది */}
-                                    <label className="block text-sm font-medium mb-2">Theme</label>
+                                    <label className="block text-sm font-medium mb-2 text-black dark:text-white">Theme</label>
                                     <div className="flex w-full bg-white/60 dark:bg-slate-700/60 p-1 rounded-xl shadow-inner border border-white/40 dark:border-slate-700">
-                                        {/* FIX 3: text-black మరియు dark:text-slate-400 (unselected) తీసివేయబడింది */}
-                                        <button onClick={() => setTheme('light')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'light' ? 'bg-white text-blue-600 shadow' : ''}`}>
-                                            <i className="ph ph-sun"></i> Light
-                                        </button>
-                                        {/* FIX 3: text-black మరియు dark:text-slate-400 (unselected) తీసివేయబడింది */}
-                                        <button onClick={() => setTheme('dark')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'dark' ? 'bg-slate-900 text-white shadow' : ''}`}>
-                                            <i className="ph ph-moon"></i> Dark
-                                        </button>
-                                        {/* FIX 3: text-black మరియు dark:text-slate-400 (unselected) తీసివేయబడింది */}
-                                        <button onClick={() => setTheme('system')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'system' ? 'bg-white text-blue-600 shadow dark:bg-slate-600 dark:text-white' : ''}`}>
-                                            <i className="ph ph-gear-six"></i> System
-                                        </button>
+                                        <button onClick={() => setTheme('light')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'light' ? 'bg-white text-blue-600 shadow' : 'text-gray-500'}`}><i className="ph ph-sun"></i> Light</button>
+                                        <button onClick={() => setTheme('dark')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'dark' ? 'bg-slate-900 text-white shadow' : 'text-gray-500'}`}><i className="ph ph-moon"></i> Dark</button>
+                                        <button onClick={() => setTheme('system')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${theme === 'system' ? 'bg-white text-blue-600 shadow dark:bg-slate-600 dark:text-white' : 'text-gray-500'}`}><i className="ph ph-gear-six"></i> Auto</button>
                                     </div>
                                 </div>
 
@@ -661,6 +1228,8 @@
                             </div>
                         </div>
                     )}
+
+
                     <div className="grid gap-5">
                         <button onClick={() => setView('course_list')} className="glass-card p-6 rounded-3xl text-left relative overflow-hidden group active:scale-95 transition-transform hover:bg-white/80">
                              <div className="absolute top-0 right-0 bg-blue-500 w-24 h-24 rounded-bl-full -mr-10 -mt-10 opacity-20"></div>
@@ -708,54 +1277,129 @@
                         </div>
                     </div>
                     <div className="space-y-3">
-                        {CURRICULUM.map(l => (
+                                                {/* కొత్త లాజిక్: ఇంగ్లీష్ అయితే CURRICULUM, హిందీ అయితే HINDI_CURRICULUM వస్తుంది */}
+                        {(prefLang === 'en' ? CURRICULUM : HINDI_CURRICULUM).map(l => (
                             <button key={l.id} onClick={() => handleStartLesson(l)} className="w-full glass-card p-4 rounded-2xl flex items-center justify-between active:scale-95 transition-all hover:bg-white/80">
                                 <div className="text-left">
-                                    <span className="text-[10px] bg-blue-100/80 text-blue-700 px-2 py-1 rounded font-bold backdrop-blur-sm dark:bg-blue-900/80 dark:text-blue-200">Class {l.id}</span>
-                                    {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
-                                    <h3 className="font-bold text-sm mt-1">{l.title.split(':')[1]}</h3>
+                                    <span className={`text-[10px] px-2 py-1 rounded font-bold backdrop-blur-sm ${prefLang === 'en' ? 'bg-blue-100/80 text-blue-700 dark:bg-blue-900/80 dark:text-blue-200' : 'bg-orange-100/80 text-orange-700 dark:bg-orange-900/80 dark:text-orange-200'}`}>
+                                        {/* ఇంగ్లీష్ అయితే 'Class', హిందీ అయితే 'Day' అని వస్తుంది */}
+                                        {prefLang === 'en' ? `Class ${l.id}` : `Day ${l.id}`}
+                                    </span>
+                                    
+                                    <h3 className="font-bold text-sm mt-1">
+                                        {/* టైటిల్ లో ':' ఉంటే దాని తర్వాత భాగం మాత్రమే చూపిస్తుంది */}
+                                        {l.title.includes(':') ? l.title.split(':')[1] : l.title}
+                                    </h3>
+                                    
+                                    {/* హిందీ మోడ్ లో వివరణ (Description) కూడా చూపిస్తుంది */}
+                                    {prefLang === 'hi' && <p className="text-xs opacity-70 mt-1 line-clamp-1">{l.desc}</p>}
                                 </div>
-                                {/* FIX 3: text-black మరియు dark:text-gray-400 తీసివేయబడింది */}
                                 <i className="ph ph-caret-right"></i>
                             </button>
                         ))}
-                    </div>
+
+                   </div>
                 </div>
             );
 
-            // 3. LESSON VIEW
+                                    // 3. LESSON VIEW (New Order: Images -> Concepts -> Teacher's Note)
             if (view === 'lesson') {
                 if (!lessonData || !lessonData.concepts) return null; 
+                
+                // --- HELPER FUNCTIONS ---
+                const renderColoredText = (text) => {
+                    return text.split(/(\s+|[.,!?;:"'()]+)/).map((part, index) => {
+                        if (/[\u0900-\u097F]/.test(part)) return <span key={index} className="text-orange-600 dark:text-orange-400 font-bold">{part}</span>;
+                        if (/[a-zA-Z]/.test(part)) return <span key={index} className="text-blue-700 dark:text-blue-300 font-bold">{part}</span>;
+                        return part;
+                    });
+                };
+
+                const renderDiagram = (diagram, index) => {
+                    if (diagram.type === 'flowchart') {
+                        return (
+                            <div key={index} className="my-6">
+                                <h5 className="font-bold text-gray-800 dark:text-gray-200 mb-2 flex items-center gap-2"><i className="ph ph-tree-structure text-blue-500"></i> {diagram.title}</h5>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 ml-1">{diagram.titleTelugu}</p>
+                                <div className="flex flex-col gap-3">{diagram.rules.map((rule, rIdx) => (<div key={rIdx} className="glass-card p-3 rounded-xl border border-white/40 flex flex-col md:flex-row items-center gap-2 text-sm"><div className="font-bold text-gray-700 dark:text-gray-300">{rule.subjects[0]}</div><i className="ph ph-arrow-right text-gray-400"></i>{rule.helpingVerb && (<><div className="font-bold text-blue-600 dark:text-blue-400">{rule.helpingVerb}</div><span className="text-gray-400">+</span></>)}<div className="font-bold text-purple-600 dark:text-purple-400">{rule.verbForm}</div></div>))}</div>
+                            </div>
+                        );
+                    } else if (diagram.type === 'mindmap') {
+                        return (
+                            <div key={index} className="my-6"><h5 className="font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">{diagram.title}</h5><div className="flex flex-col items-center gap-4"><div className="p-4 glass-card bg-blue-500/10 text-blue-700 dark:text-blue-300 rounded-full font-bold text-sm w-32 h-32 flex items-center justify-center border-4 border-white/50">{diagram.centralTopic}</div><div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full mt-4">{diagram.branches.map((branch, bIdx) => (<div key={bIdx} className="flex items-center gap-3 glass-card p-3 rounded-lg"><div className="w-2 h-2 rounded-full bg-blue-400 shrink-0"></div><div><p className="font-bold text-gray-800 dark:text-gray-200 text-sm">{branch.text}</p><p className="text-xs text-gray-500">{branch.telugu}</p></div></div>))}</div></div></div>
+                        );
+                    }
+                };
+
                 return (
                 <div className="min-h-screen pb-24">
-                    {/* FIX 2: MuteButton మరియు gap-2 జోడించబడింది */}
+                    {/* --- FULL SCREEN IMMERSIVE MODAL --- */}
+                    {imageModalOpen && (
+                        <div className="fixed inset-0 z-50 bg-black flex items-center justify-center animate-slide-in">
+                            <div className={`absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-50 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                                <div className="text-white/90 text-sm font-bold bg-black/40 px-3 py-1 rounded-full backdrop-blur-md border border-white/10">
+                                    {activeImageIndex + 1} / {selectedLesson.imageCount}
+                                </div>
+                                <button onClick={closeImageModal} className="p-3 bg-black/40 text-white rounded-full backdrop-blur-md border border-white/10"><i className="ph ph-x text-xl"></i></button>
+                            </div>
+                            <div className="w-full h-full touch-none flex items-center justify-center overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onClick={toggleControls}>
+                                <img src={`./images/class_${String(selectedLesson.id).padStart(2, '0')}_${activeImageIndex + 1}.webp`} style={{ transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`, transition: isDragging ? 'none' : 'transform 0.3s ease-out', maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} alt="Full Screen View" className="select-none" />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- NAVBAR --- */}
                     <div className="glass-panel sticky top-0 z-20 p-4 flex justify-between items-center border-b-0 shadow-lg backdrop-blur-xl gap-2">
-                        {/* FIX 3: text-black మరియు dark:text-gray-300 తీసివేయబడింది */}
                         <button onClick={() => setView('course_list')} className="p-2 hover:bg-white/50 rounded-full"><i className="ph ph-arrow-left text-xl"></i></button>
                         <span className={`text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm ${prefLang === 'en' ? 'bg-blue-100/80 text-blue-800 dark:bg-blue-900/80 dark:text-blue-200' : 'bg-orange-100/80 text-orange-800 dark:bg-orange-900/80 dark:text-orange-200'}`}>{prefLang === 'en' ? 'English' : 'Hindi'} Mode</span>
                         <button onClick={() => { if(confirm('Refresh? This will use API quota.')) handleStartLesson(selectedLesson, true); }} className="p-2 rounded-full bg-blue-50/80 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/80 dark:text-blue-300 dark:hover:bg-blue-800"><i className="ph ph-arrows-clockwise text-xl"></i></button>
                         <MuteButton />
                     </div>
+
                     <div className="p-4 space-y-6 animate-slide-in">
-                        {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
-                        <div className="text-center my-2 glass-card p-3 rounded-xl inline-block w-full"><h3 className="text-lg font-telugu font-bold leading-snug">{lessonData.teluguTitle}</h3></div>
+                        
+                        {/* 1. TITLE (Top) */}
+                        <div className="text-center my-2 glass-card p-3 rounded-xl inline-block w-full">
+                            <h3 className="text-lg font-telugu font-bold leading-snug">{lessonData.teluguTitle}</h3>
+                        </div>
+
+                        {/* 2. VISUAL GUIDES (Images First) */}
+                        {selectedLesson.imageCount > 0 && prefLang === 'en' && (
+                            <div className="mt-4 mb-2 animate-slide-in">
+                                <h3 className="font-bold text-sm mb-3 px-1 opacity-80 flex items-center gap-2 dark:text-slate-200">
+                                    <i className="ph ph-images-square text-lg text-blue-500"></i> Visual Guides
+                                </h3>
+                                <div className="flex gap-3 overflow-x-auto pb-4 px-1 snap-x no-scrollbar" style={{scrollbarWidth: 'none'}}>
+                                    {[...Array(selectedLesson.imageCount)].map((_, i) => {
+                                        return (
+                                            <div key={i} className="flex-shrink-0 snap-center relative" onClick={() => openImageModal(i)}>
+                                                <img 
+                                                    src={`./images/class_${String(selectedLesson.id).padStart(2, '0')}_${i + 1}.webp`} 
+                                                    alt={`Guide ${i + 1}`}
+                                                    className="h-48 w-auto rounded-xl shadow-sm border border-white/30 object-cover bg-white/20 dark:bg-slate-800 active:scale-95 transition-transform"
+                                                    loading="lazy"
+                                                />
+                                                <div className="absolute bottom-2 right-2 bg-black/40 text-white p-1.5 rounded-full backdrop-blur-md pointer-events-none"><i className="ph ph-arrows-out-simple text-xs"></i></div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 3. CONCEPTS (Moved ABOVE Teacher's Note) */}
                         {lessonData.concepts.map((c, i) => (
                             <div key={i} className="glass-card p-5 rounded-3xl">
-                                {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
                                 <h3 className="font-bold mb-3 flex items-center gap-2 text-sm uppercase tracking-wide"><i className="ph ph-sparkle text-yellow-500 drop-shadow-sm"></i> {c.title}</h3>
                                 <div className="bg-white/60 p-4 rounded-xl mb-4 relative group border border-white/50 shadow-inner dark:bg-slate-800/60">
-                                    {/* FIX 3: text-black మరియు dark:text-slate-200 తీసివేయబడింది */}
                                     <p className="text-sm font-telugu leading-relaxed pr-8 font-medium">{c.explanation}</p>
-                                    {/* FIX 3: text-gray-900... залишено, ఇది భిన్నమైన రంగు */}
                                     <button onClick={() => speak(c.explanation, 'te')} className="absolute top-3 right-3 text-gray-900 hover:text-blue-600 bg-white/80 dark:bg-slate-600/50 dark:text-slate-400 dark:hover:text-blue-400 p-1.5 rounded-full shadow-sm"><i className="ph ph-speaker-high"></i></button>
                                 </div>
                                 <div className="space-y-3">
                                     {c.examples.map((ex, j) => (
                                         <div key={j} className={`border-l-4 pl-4 py-2 ${prefLang === 'en' ? 'border-blue-500' : 'border-orange-500'} bg-white/40 rounded-r-xl backdrop-blur-sm dark:bg-slate-700/30`}>
                                             <div className="flex justify-between items-start mb-1">
-                                                {/* FIX 3: text-black మరియు dark:text-slate-400 తీసివేయబడింది */}
                                                 <span className="text-xs font-telugu font-semibold">{ex.te}</span>
-                                                {/* FIX 3: text-gray-900... залишено */}
                                                 <button onClick={() => speak(ex.te, 'te')} className="text-gray-900 hover:text-black dark:text-gray-500 dark:hover:text-gray-300"><i className="ph ph-speaker-simple-high text-xs"></i></button>
                                             </div>
                                             <div className="flex flex-col gap-1 mt-1">
@@ -777,13 +1421,96 @@
                                 </div>
                             </div>
                         ))}
+
+                        {/* 4. TEACHER NOTE SECTION (Moved to BOTTOM) */}
+                        {(lessonData.rawNote || window.CLASS_NOTES?.[selectedLesson.id] || window.CLASS_NOTES?.[String(selectedLesson.id)] || selectedLesson.note || window.allLessonDiagrams?.find(d => d.classId === "Class " + String(selectedLesson.id).padStart(2, '0'))) && (() => {
+                            const noteContent = lessonData.rawNote || window.CLASS_NOTES?.[selectedLesson.id] || window.CLASS_NOTES?.[String(selectedLesson.id)] || selectedLesson.note || "";
+                            const cleanNote = noteContent.replace(/\[Source:.*?\]/gi, '').trim();
+                            const paragraphs = cleanNote.split('\n').filter(p => p.trim() !== "");
+                            
+                            const classIdString = "Class " + String(selectedLesson.id).padStart(2, '0');
+                            const diagramData = window.allLessonDiagrams?.find(d => d.classId === classIdString);
+
+                            return (
+                                <div className="glass-card p-5 rounded-3xl mb-6 animate-slide-in relative overflow-hidden border border-blue-100 dark:border-slate-700 shadow-sm mt-4">
+                                    {/* Background Icon */}
+                                    <div className="absolute -top-4 -right-4 opacity-5 pointer-events-none">
+                                        <i className="ph ph-notebook text-9xl text-blue-600 dark:text-blue-400"></i>
+                                    </div>
+
+                                    {/* Header with Play All */}
+                                    <div className="flex justify-between items-center mb-6 relative z-10 border-b border-gray-200 dark:border-gray-700 pb-3">
+                                        <h3 className="font-bold text-lg flex items-center gap-2 text-blue-800 dark:text-blue-300">
+                                            <i className="ph ph-chalkboard-teacher text-2xl"></i> Teacher's Note
+                                        </h3>
+                                        {cleanNote && (
+                                            <button onClick={() => speak(cleanNote, 'te')} className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-slate-700 dark:text-blue-300 transition-colors">
+                                                Play All <i className="ph ph-speaker-high"></i>
+                                            </button>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Diagrams Section */}
+                                    {diagramData && diagramData.diagrams && (
+                                        <div className="mb-6 bg-white/50 p-4 rounded-2xl border border-white dark:bg-slate-800/50 dark:border-slate-700">
+                                            {diagramData.diagrams.map((d, i) => renderDiagram(d, i))}
+                                        </div>
+                                    )}
+
+                                    {/* Text Content */}
+                                    <div className="space-y-4 relative z-10">
+                                        {paragraphs.map((para, index) => {
+                                            const isHeader = para.trim().startsWith('**');
+                                            const txt = para.replace(/\*\*/g, '').trim();
+                                            
+                                            // FIX: Hindi Color Logic Restored
+                                            const isHindi = /[\u0900-\u097F]/.test(txt);
+                                            const indicatorColor = isHindi ? 'bg-orange-500' : 'bg-blue-400 dark:bg-blue-600';
+
+                                            if (isHeader) {
+                                                return (
+                                                    <div key={index} className="mt-4 first:mt-0">
+                                                        <h4 className="font-bold text-orange-700 dark:text-orange-400 text-base flex items-center gap-2">
+                                                            <i className="ph ph-caret-right text-xs"></i> {txt.replace(/:/g, '')}
+                                                        </h4>
+                                                    </div>
+                                                );
+                                            }
+                                            
+                                            return (
+                                                <div key={index} className="flex gap-3 group items-start">
+                                                    {/* Color Dot */}
+                                                    <div className={`mt-2.5 w-1.5 h-1.5 rounded-full ${indicatorColor} shrink-0`}></div>
+                                                    
+                                                    {/* Text */}
+                                                    <p className="text-gray-700 dark:text-slate-300 text-[15px] leading-relaxed font-telugu flex-1">
+                                                        {renderColoredText(txt)}
+                                                    </p>
+                                                    
+                                                    {/* Speaker Button */}
+                                                    <button onClick={() => speak(txt, 'te')} className="shrink-0 p-1 text-gray-400 hover:text-blue-600 dark:text-gray-500 dark:hover:text-blue-400 opacity-60 hover:opacity-100 transition-opacity mt-1">
+                                                        <i className="ph ph-speaker-simple-high text-lg"></i>
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })()}
+
                     </div>
-                    <div className="fixed bottom-0 left-0 right-0 p-4 glass-panel border-t-0 flex justify-center z-20"><button onClick={startQuiz} className={`w-full max-w-md text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 flex items-center justify-center gap-2 ${prefLang === 'en' ? 'bg-blue-600/90 hover:bg-blue-600' : 'bg-orange-600/90 hover:bg-orange-600'} backdrop-blur-md`}>
+
+                    {/* QUIZ BUTTON */}
+                    <div className="fixed bottom-0 left-0 right-0 p-4 glass-panel border-t-0 flex justify-center z-20">
+                        <button onClick={startQuiz} className={`w-full max-w-md text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 flex items-center justify-center gap-2 ${prefLang === 'en' ? 'bg-blue-600/90 hover:bg-blue-600' : 'bg-orange-600/90 hover:bg-orange-600'} backdrop-blur-md`}>
                             Start Quiz ({prefQCount} Qs) <i className="ph ph-caret-right"></i>
                         </button>
                     </div>
                 </div>
-            );}
+            );
+        }
+
 
             // 4. QUIZ VIEW
             if (view === 'quiz') {
@@ -956,7 +1683,8 @@
                     <div className="grid grid-cols-2 gap-3">
                         {SCENARIOS.map(s => (
                             <button key={s.id} onClick={() => handleStartChat(s)} className="glass-card p-4 rounded-2xl text-center active:scale-95 transition-all hover:bg-white/80">
-                                <i className={`ph ${s.icon} text-3xl text-blue-600 mb-2 drop-shadow-sm`}></i>
+                                <i className={`ph ${s.icon} text-3xl ${chatLang === 'en' ? 'text-blue-600' : 'text-orange-600'} mb-2 drop-shadow-sm`}></i>
+
                                 {/* FIX 3: text-black మరియు dark:text-slate-300 తీసివేయబడింది */}
                                 <h3 className="font-bold text-xs leading-tight font-telugu">{s.title}</h3>
                             </button>
