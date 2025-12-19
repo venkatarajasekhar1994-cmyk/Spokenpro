@@ -100,6 +100,22 @@
             border: 1px solid rgba(63, 80, 102, 1);
             color: #f1f5f9 !important;
         }
+        /* --- IMAGE FILTERS FOR DARK MODE --- */
+        /* ఇది కేవలం Dark Mode ఆన్ లో ఉన్నప్పుడే పనిచేస్తుంది */
+        .dark .filter-dim { 
+            filter: brightness(0.7) contrast(1.1); 
+            transition: filter 0.3s ease;
+        }
+        .dark .filter-pro { 
+            /* Smart Invert Recommended Code */
+            filter: invert(1) hue-rotate(180deg) saturate(1.4) contrast(1.1); 
+            transition: filter 0.3s ease;
+        }
+        .dark .filter-normal { 
+            filter: none; 
+            transition: filter 0.3s ease;
+        }
+
 
         /* --- ANIMATIONS & UTILS --- */
         .font-telugu { font-family: 'Ramabhadra', sans-serif; }
@@ -837,6 +853,13 @@ const HINDI_CURRICULUM = [
             setInstallPrompt(null);
         };
             const [theme, setTheme] = useState(localStorage.getItem('spokenpro_theme') || 'system');
+            // --- IMAGE MODE STATE (New) ---
+            const [imgMode, setImgMode] = useState(localStorage.getItem('spokenpro_img_mode') || 'pro');
+            
+            // Save preference whenever it changes
+            useEffect(() => {
+                localStorage.setItem('spokenpro_img_mode', imgMode);
+            }, [imgMode]);
             
             // --- IMAGE MODAL STATES (SWIPE & ZOOM) ---
             const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -1236,7 +1259,24 @@ const HINDI_CURRICULUM = [
                                     </div>
                                 </div>
 
-                                <button onClick={saveSettings} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition-colors">Save & Close</button>
+                                                                {/* --- NEW: DARK MODE IMAGE SETTINGS --- */}
+                                <div className="mb-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+                                    <label className="block text-sm font-medium mb-2 text-black dark:text-white">Dark Mode Images</label>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <button onClick={() => setImgMode('normal')} className={`py-2 rounded-xl text-[10px] font-bold border transition-all ${imgMode === 'normal' ? 'bg-blue-100 border-blue-500 text-blue-700 dark:bg-blue-900 dark:text-white' : 'border-gray-200 text-gray-500 dark:border-slate-700'}`}>
+                                            Normal
+                                        </button>
+                                        <button onClick={() => setImgMode('dim')} className={`py-2 rounded-xl text-[10px] font-bold border transition-all ${imgMode === 'dim' ? 'bg-blue-100 border-blue-500 text-blue-700 dark:bg-blue-900 dark:text-white' : 'border-gray-200 text-gray-500 dark:border-slate-700'}`}>
+                                            Dim (Night)
+                                        </button>
+                                        <button onClick={() => setImgMode('pro')} className={`py-2 rounded-xl text-[10px] font-bold border transition-all ${imgMode === 'pro' ? 'bg-blue-100 border-blue-500 text-blue-700 dark:bg-blue-900 dark:text-white' : 'border-gray-200 text-gray-500 dark:border-slate-700'}`}>
+                                            Smart Pro ✨
+                                        </button>
+                                    </div>
+                                    <p className="text-[10px] text-gray-400 mt-1 text-center">Changes apply only when Dark Mode is ON.</p>
+                                </div>
+
+<button onClick={saveSettings} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition-colors">Save & Close</button>
                             </div>
                         </div>
                     )}
@@ -1388,7 +1428,7 @@ const HINDI_CURRICULUM = [
                                         objectFit: 'contain' 
                                     }} 
                                     alt="Full Screen View" 
-                                    className="select-none drop-shadow-2xl" 
+                                    className={`select-none drop-shadow-2xl filter-${imgMode}`} 
                                 />
                             </div>
 
@@ -1434,7 +1474,8 @@ const HINDI_CURRICULUM = [
                                                 <img 
                                                     src={`./images/class_${String(selectedLesson.id).padStart(2, '0')}_${i + 1}.webp`} 
                                                     alt={`Guide ${i + 1}`}
-                                                    className="h-48 w-auto rounded-xl shadow-sm border border-white/30 object-cover bg-white/20 dark:bg-slate-800 active:scale-95 transition-transform"
+                                                    className={`h-48 w-auto rounded-xl shadow-sm border border-white/30 object-cover bg-white/20 dark:bg-slate-800 active:scale-95 transition-transform filter-${imgMode}`}
+
                                                     loading="lazy"
                                                 />
                                                 <div className="absolute bottom-2 right-2 bg-black/40 text-white p-1.5 rounded-full backdrop-blur-md pointer-events-none"><i className="ph ph-arrows-out-simple text-xs"></i></div>
