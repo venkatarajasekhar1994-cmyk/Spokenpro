@@ -870,34 +870,48 @@ const HINDI_CURRICULUM = [
                 return () => window.removeEventListener('pointerdown', handleGlobalTouch);
             }, [enableHaptic, enableSound]);
 
-                        // --- AUTO ROTATION LOGIC (UPDATED FIX) ---
-            useEffect(() => {
-                const handleRotation = async () => {
-                    // API ఉందో లేదో చెక్ చేయడం (Safety Check)
-                    if (!window.screen || !window.screen.orientation) return;
-
-                    try {
-                        if (enableRotation) {
-                            // User wants Auto-Rotation (Unlock) -> తిరగడానికి అనుమతించు
-                            if (typeof window.screen.orientation.unlock === 'function') {
-                                window.screen.orientation.unlock();
-                            }
-                        } else {
-                            // User wants Portrait Lock -> నిలువుగా లాక్ చెయ్యి
-                            if (typeof window.screen.orientation.lock === 'function') {
-                                // గమనిక: ఇది పనిచేయాలంటే యాప్ "Install" అయి ఉండాలి లేదా Fullscreen లో ఉండాలి
-                                await window.screen.orientation.lock('portrait').catch((err) => {
-                                    console.log("Rotation Lock skipped (Not in Fullscreen/App Mode)");
-                                });
-                            }
+                                    // --- AUTO ROTATION LOGIC (GESTURE AWARE FIX) ---
+            
+            // 1. రొటేషన్ ని కంట్రోల్ చేసే ఫంక్షన్
+            const performRotationLock = async (shouldAllowRotation) => {
+                if (!window.screen || !window.screen.orientation) return;
+                
+                try {
+                    if (shouldAllowRotation) {
+                        // UNLOCK: స్క్రీన్ తిరగడానికి పర్మిషన్ ఇస్తుంది
+                        if (typeof window.screen.orientation.unlock === 'function') {
+                            window.screen.orientation.unlock();
+                            console.log("Rotation Unlocked (Any)");
                         }
-                    } catch (e) {
-                        console.log("Rotation Error:", e);
+                    } else {
+                        // LOCK: స్క్రీన్ ని నిలువుగా (Portrait) లాక్ చేస్తుంది
+                        if (typeof window.screen.orientation.lock === 'function') {
+                            // గమనిక: ఇది బటన్ నొక్కినప్పుడు మాత్రమే పర్ఫెక్ట్ గా పనిచేస్తుంది
+                            await window.screen.orientation.lock('portrait').catch((err) => {
+                                console.log("Lock failed (might need full screen):", err);
+                            });
+                            console.log("Rotation Locked (Portrait)");
+                        }
                     }
-                };
+                } catch (e) {
+                    console.log("Rotation Action Failed:", e);
+                }
+            };
 
-                handleRotation();
-            }, [enableRotation]);
+            // 2. యాప్ ఓపెన్ అయినప్పుడు ఒక్కసారి చెక్ చేస్తుంది
+            useEffect(() => {
+                performRotationLock(enableRotation);
+            }, []); 
+
+            // 3. బటన్ నొక్కినప్పుడు జరిగే యాక్షన్ (ఇది ముఖ్యం)
+            const toggleRotation = () => {
+                const newState = !enableRotation;
+                setEnableRotation(newState);
+                localStorage.setItem('sp_rotation', newState);
+                
+                // ఇక్కడే మ్యాజిక్ జరుగుతుంది: క్లిక్ చేసిన వెంటనే లాక్ చేస్తుంది
+                performRotationLock(newState);
+            };
 
             // --- BACK BUTTON LOGIC (History API) ---
             useEffect(() => {
@@ -1404,10 +1418,10 @@ const HINDI_CURRICULUM = [
                                                     <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${enableHaptic ? 'left-6' : 'left-1'}`}></div>
                                                 </button>
                                             </div>
-                                            {/* Rotation Toggle */}
+                                                                                        {/* Rotation Toggle (UPDATED BUTTON) */}
                                             <div className="flex justify-between items-center glass-card p-2 rounded-xl">
                                                 <span className="text-xs font-bold flex items-center gap-2"><i className="ph ph-device-rotate"></i> Auto Rotation</span>
-                                                <button onClick={() => { setEnableRotation(!enableRotation); localStorage.setItem('sp_rotation', !enableRotation); }} className={`w-10 h-5 rounded-full relative transition-colors ${enableRotation ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                                                <button onClick={toggleRotation} className={`w-10 h-5 rounded-full relative transition-colors ${enableRotation ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
                                                     <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${enableRotation ? 'left-6' : 'left-1'}`}></div>
                                                 </button>
                                             </div>
