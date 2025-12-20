@@ -1507,22 +1507,153 @@ const HINDI_CURRICULUM = [
                     });
                 };
 
-                const renderDiagram = (diagram, index) => {
-                    if (diagram.type === 'flowchart') {
-                        return (
-                            <div key={index} className="my-6">
-                                <h5 className="font-bold text-gray-800 dark:text-gray-200 mb-2 flex items-center gap-2"><i className="ph ph-tree-structure text-blue-500"></i> {diagram.title}</h5>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 ml-1">{diagram.titleTelugu}</p>
-                                <div className="flex flex-col gap-3">{diagram.rules.map((rule, rIdx) => (<div key={rIdx} className="glass-card p-3 rounded-xl border border-white/40 flex flex-col md:flex-row items-center gap-2 text-sm"><div className="font-bold text-gray-700 dark:text-gray-300">{rule.subjects[0]}</div><i className="ph ph-arrow-right text-gray-400"></i>{rule.helpingVerb && (<><div className="font-bold text-blue-600 dark:text-blue-400">{rule.helpingVerb}</div><span className="text-gray-400">+</span></>)}<div className="font-bold text-purple-600 dark:text-purple-400">{rule.verbForm}</div></div>))}</div>
-                            </div>
-                        );
-                    } else if (diagram.type === 'mindmap') {
-                        return (
-                            <div key={index} className="my-6"><h5 className="font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">{diagram.title}</h5><div className="flex flex-col items-center gap-4"><div className="p-4 glass-card bg-blue-500/10 text-blue-700 dark:text-blue-300 rounded-full font-bold text-sm w-32 h-32 flex items-center justify-center border-4 border-white/50">{diagram.centralTopic}</div><div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full mt-4">{diagram.branches.map((branch, bIdx) => (<div key={bIdx} className="flex items-center gap-3 glass-card p-3 rounded-lg"><div className="w-2 h-2 rounded-full bg-blue-400 shrink-0"></div><div><p className="font-bold text-gray-800 dark:text-gray-200 text-sm">{branch.text}</p><p className="text-xs text-gray-500">{branch.telugu}</p></div></div>))}</div></div></div>
-                        );
-                    }
-                };
+                // ============================================================
+// MODERN DIAGRAM RENDERER (COPY & REPLACE IN index.html)
+// ============================================================
 
+const renderDiagram = (diagram, index) => {
+    // 1. FLOWCHART STYLE (MODERN & COLORFUL)
+    if (diagram.type === 'flowchart') {
+        return (
+            <div key={index} className="my-8 animate-slide-in">
+                {/* Title Section */}
+                <div className="flex items-center gap-3 mb-4 px-2">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg text-blue-600 dark:text-blue-300">
+                        <i className="ph ph-git-merge text-xl"></i>
+                    </div>
+                    <div>
+                        <h5 className="font-bold text-gray-800 dark:text-gray-100 text-lg leading-tight">{diagram.title}</h5>
+                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{diagram.titleTelugu}</p>
+                    </div>
+                </div>
+
+                {/* Rules Container */}
+                <div className="flex flex-col gap-4">
+                    {diagram.rules.map((rule, rIdx) => (
+                        <div key={rIdx} className="glass-card p-4 rounded-2xl border border-white/60 shadow-sm relative overflow-hidden group hover:shadow-md transition-all dark:bg-slate-800/60 dark:border-slate-700">
+                            {/* Decorative Background Blur */}
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+
+                            <div className="flex flex-col md:flex-row items-center gap-3 relative z-10 flex-wrap justify-center md:justify-start">
+                                
+                                {/* SUBJECTS (Blue Badge) */}
+                                <div className="flex flex-col items-center md:items-start">
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Subject</span>
+                                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 text-blue-800 px-4 py-2 rounded-xl font-bold text-sm shadow-sm border border-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 dark:text-blue-200 dark:border-blue-700/50 text-center">
+                                        {rule.subjects.join(', ')}
+                                    </div>
+                                    {rule.subjectsTelugu && <span className="text-[10px] text-gray-500 mt-1">{rule.subjectsTelugu.join(', ')}</span>}
+                                </div>
+
+                                {/* Arrow Icon */}
+                                <i className="ph ph-arrow-right text-gray-400 text-lg hidden md:block"></i>
+                                <i className="ph ph-arrow-down text-gray-400 text-lg block md:hidden"></i>
+
+                                {/* VERB SECTION (Purple Badge) */}
+                                <div className="flex flex-col items-center md:items-start">
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Action</span>
+                                    <div className="flex items-center gap-2 bg-gradient-to-br from-purple-50 to-purple-100 text-purple-900 px-4 py-2 rounded-xl font-bold text-sm shadow-sm border border-purple-200 dark:from-purple-900/40 dark:to-purple-800/40 dark:text-purple-200 dark:border-purple-700/50">
+                                        {rule.helpingVerb && (
+                                            <>
+                                                <span className="text-purple-600 dark:text-purple-300">{rule.helpingVerb}</span>
+                                                <span className="text-purple-400/60 text-xs">+</span>
+                                            </>
+                                        )}
+                                        <span>{rule.verbForm}</span>
+                                    </div>
+                                </div>
+
+                                {/* OBJECTS SECTION (Green Badge) - Only if exists */}
+                                {rule.objects && rule.objects.length > 0 && (
+                                    <>
+                                        <i className="ph ph-arrow-right text-gray-400 text-lg hidden md:block"></i>
+                                        <i className="ph ph-arrow-down text-gray-400 text-lg block md:hidden"></i>
+                                        
+                                        <div className="flex flex-col items-center md:items-start">
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Object</span>
+                                            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-800 px-4 py-2 rounded-xl font-bold text-sm shadow-sm border border-emerald-200 dark:from-emerald-900/40 dark:to-emerald-800/40 dark:text-emerald-200 dark:border-emerald-700/50 text-center">
+                                                {rule.objects.join(', ')}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Example Section at Bottom */}
+                            {(rule.example || rule.exampleTelugu) && (
+                                <div className="mt-4 pt-3 border-t border-gray-200/60 dark:border-gray-700/60 flex flex-col sm:flex-row gap-2 text-sm">
+                                    <span className="font-bold text-gray-500 text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded self-start">Ex:</span>
+                                    <div>
+                                        <p className="font-semibold text-gray-800 dark:text-gray-200">{rule.example}</p>
+                                        <p className="text-gray-500 text-xs dark:text-gray-400 font-telugu">{rule.exampleTelugu}</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    } 
+    
+    // 2. MINDMAP STYLE (MODERN & COLORFUL)
+    else if (diagram.type === 'mindmap') {
+        return (
+            <div key={index} className="my-8 animate-slide-in">
+                <h5 className="font-bold text-center text-gray-800 dark:text-gray-200 mb-6 text-lg relative">
+                    <span className="relative z-10 px-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-full">{diagram.title}</span>
+                    <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600 -z-0"></div>
+                </h5>
+                
+                <div className="flex flex-col items-center gap-6">
+                    {/* Central Node (Gradient Circle) */}
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-blue-500 rounded-full blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                        <div className="relative w-36 h-36 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 p-1 shadow-xl flex items-center justify-center text-center">
+                            <div className="w-full h-full bg-white dark:bg-slate-900 rounded-full flex flex-col items-center justify-center p-2">
+                                <span className="font-bold text-blue-600 dark:text-blue-300 text-sm whitespace-pre-wrap leading-tight">
+                                    {diagram.centralTopic}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Branches Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                        {diagram.branches.map((branch, bIdx) => (
+                            <div key={bIdx} className="glass-card p-4 rounded-xl border-l-4 border-l-blue-400 dark:border-l-blue-500 shadow-sm hover:translate-x-1 transition-transform dark:bg-slate-800/60">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <p className="font-bold text-gray-800 dark:text-gray-100 text-sm">{branch.text}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 font-telugu mt-0.5">{branch.telugu}</p>
+                                    </div>
+                                    {branch.example && (
+                                        <div className="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded max-w-[40%] text-right truncate">
+                                            {branch.example}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* SUB-BRANCHES (Missing Logic Added Here) */}
+                                {branch.subBranches && (
+                                    <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700/50 space-y-1.5">
+                                        {branch.subBranches.map((sub, sIdx) => (
+                                            <div key={sIdx} className="flex items-center gap-2 text-xs">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0"></div>
+                                                <span className="text-gray-700 dark:text-gray-300 font-medium">{sub.text}</span>
+                                                {sub.telugu && <span className="text-gray-400 dark:text-gray-500 text-[10px]">({sub.telugu})</span>}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+};
                 return (
                 <div className="min-h-screen pb-24">
                                                             {/* --- FULL SCREEN IMMERSIVE MODAL (Updated: Arrows Hide on Tap) --- */}
