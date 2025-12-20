@@ -1,5 +1,5 @@
 // Cache Name Updated to SpokenPro
-const CACHE_NAME = 'spokenpro-v1';
+const CACHE_NAME = 'spokenpro-v2';
 
 // Main App Files to Cache Immediately (App Shell)
 const ASSETS_TO_CACHE = [
