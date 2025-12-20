@@ -870,13 +870,33 @@ const HINDI_CURRICULUM = [
                 return () => window.removeEventListener('pointerdown', handleGlobalTouch);
             }, [enableHaptic, enableSound]);
 
-            // --- AUTO ROTATION LOGIC ---
+                        // --- AUTO ROTATION LOGIC (UPDATED FIX) ---
             useEffect(() => {
-                if (enableRotation && screen.orientation && screen.orientation.unlock) {
-                    try { screen.orientation.unlock(); } catch(e){}
-                } else if (!enableRotation && screen.orientation && screen.orientation.lock) {
-                    try { screen.orientation.lock('portrait').catch(() => {}); } catch(e){}
-                }
+                const handleRotation = async () => {
+                    // API ఉందో లేదో చెక్ చేయడం (Safety Check)
+                    if (!window.screen || !window.screen.orientation) return;
+
+                    try {
+                        if (enableRotation) {
+                            // User wants Auto-Rotation (Unlock) -> తిరగడానికి అనుమతించు
+                            if (typeof window.screen.orientation.unlock === 'function') {
+                                window.screen.orientation.unlock();
+                            }
+                        } else {
+                            // User wants Portrait Lock -> నిలువుగా లాక్ చెయ్యి
+                            if (typeof window.screen.orientation.lock === 'function') {
+                                // గమనిక: ఇది పనిచేయాలంటే యాప్ "Install" అయి ఉండాలి లేదా Fullscreen లో ఉండాలి
+                                await window.screen.orientation.lock('portrait').catch((err) => {
+                                    console.log("Rotation Lock skipped (Not in Fullscreen/App Mode)");
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        console.log("Rotation Error:", e);
+                    }
+                };
+
+                handleRotation();
             }, [enableRotation]);
 
             // --- BACK BUTTON LOGIC (History API) ---
