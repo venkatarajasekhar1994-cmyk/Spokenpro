@@ -1,1 +1,1 @@
-{"name":"SpokenPro","short_name":"SpokenPro","start_url":".","display":"standalone","background_color":"#f8fafc","theme_color":"#2563eb","orientation":"portrait","icons":[{"src":"logo.png","sizes":"192x192 512x512","type":"image/png","purpose":"any maskable"}]}
+{"name":"SpokenPro","short_name":"SpokenPro","start_url":".","display":"standalone","background_color":"#f8fafc","theme_color":"#2563eb","orientation":"any","icons":[{"src":"logo.png","sizes":"192x192 512x512","type":"image/png","purpose":"any maskable"}]}
