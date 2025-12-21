@@ -898,10 +898,32 @@ const HINDI_CURRICULUM = [
                 }
             };
 
-            // 2. యాప్ ఓపెన్ అయినప్పుడు ఒక్కసారి చెక్ చేస్తుంది
+                        // 2. శక్తివంతమైన రొటేషన్ లాజిక్ (Stronger Fix)
             useEffect(() => {
+                // A. యాప్ ఓపెన్ అయిన వెంటనే చెక్ చేయి
                 performRotationLock(enableRotation);
-            }, []); 
+
+                // B. యాప్ మినిమైజ్ చేసి మళ్ళీ ఓపెన్ చేసినప్పుడు (Resume) చెక్ చేయి
+                const handleVisibilityChange = () => {
+                    if (document.visibilityState === 'visible') {
+                        // బ్రౌజర్ కి మళ్ళీ గుర్తు చేస్తున్నాం: "లాక్ చేయి!"
+                        performRotationLock(enableRotation);
+                    }
+                };
+
+                // C. స్క్రీన్ సైజు మారినప్పుడు కూడా చెక్ చేయి (ఫోన్ తిప్పే ప్రయత్నం చేసినప్పుడు)
+                const handleResize = () => {
+                    performRotationLock(enableRotation);
+                };
+
+                document.addEventListener('visibilitychange', handleVisibilityChange);
+                window.addEventListener('resize', handleResize);
+
+                return () => {
+                    document.removeEventListener('visibilitychange', handleVisibilityChange);
+                    window.removeEventListener('resize', handleResize);
+                };
+            }, [enableRotation]); 
 
             // 3. బటన్ నొక్కినప్పుడు జరిగే యాక్షన్ (ఇది ముఖ్యం)
             const toggleRotation = () => {
@@ -1149,43 +1171,70 @@ const HINDI_CURRICULUM = [
             useEffect(() => { if (waitTime > 0) { const t = setTimeout(() => setWaitTime(w => w - 1), 1000); return () => clearTimeout(t); } }, [waitTime]);
             useEffect(() => { if (chatContainerRef.current) chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight; }, [messages]);
             
-                        // --- UPDATED SPEAK FUNCTION (కొత్త కోడ్) ---
-                        const speak = (text, lang) => {
-                if (isMuted || !text) return; 
-                if (!window.speechSynthesis) return;
+                                    // --- SMART VOICE FUNCTION (With Expansion Rules) ---
+            const speak = (text, lang) => {
+                if (isMuted || !text) return;
                 
-                if (window.speechSynthesis.speaking && text === currentlySpeakingText) { stopAudio(); return; }
-                stopAudio();
+                // స్పీచ్ సింథసిస్ ఉందో లేదో చెక్ చేయడం
+                if (!window.speechSynthesis) return;
 
-                // మార్పు: బ్రాకెట్ ఓపెన్ కాగానే మరియు క్లోజ్ కాగానే " . . . " (చుక్కలు) పెడుతున్నాం.
-                // దీనివల్ల కంప్యూటర్ అక్కడ కాసేపు ఆగుతుంది.
-                const cleanText = text
-                    .replace(/\(/g, '. . . ') 
-                    .replace(/\)/g, ' . . . ')    
-                    .replace(/[*_#`~@]/g, '')   
-                    .replace(/\|/g, ' ')        
-                    .replace(/-/g, ' ')         
-                    .replace(/\//g, ' or ')
-                    .replace(/[\[\]]/g, ' ')  
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+
+                // --- TEXT CLEANING & EXPANSION RULES ---
+                let cleanText = text
+                    // 1. బ్రాకెట్ రూల్స్ (Pause కోసం)
+                    .replace(/\(/g, '. ') 
+                    .replace(/\)/g, ' . ')    
+                    
+                    // 2. అనవసరమైన సింబల్స్ తొలగింపు
+                    .replace(/[*_#`~@]/g, '')
                     .replace('Correct (సరైన వాక్యం):', '')
                     .replace('సవరణ (Correction):', '')
+
+                    // 3. కొత్త రూల్: "Ex" ని "Example" గా మార్చడం (Whole Word Only)
+                    // \b అంటే పదం విడిగా ఉన్నప్పుడే మారుతుంది. (Ex: 'Extra' మారదు, కానీ 'Ex:' మారుతుంది)
+                    .replace(/\b(ex|Ex|EX)\b/g, 'example')
+
+                    // 4. కొత్త రూల్: "ఉదా" ని "ఉదాహరణ" గా మార్చడం
+                    // తెలుగు పదాలకు \b సరిగ్గా పనిచేయదు కాబట్టి, స్పేస్ ని బట్టి మారుస్తున్నాం
+                    .replace(/(^|\s)ఉదా(?=\s|$|[.,!:])/g, '$1ఉదాహరణ')
+
+                    // 5. చివరగా స్పేస్ లు సరిచేయడం
                     .replace(/\s+/g, ' ').trim();
 
                 const utterance = new SpeechSynthesisUtterance(cleanText);
-                
-                if (lang === 'te') utterance.lang = 'te-IN';
-                else if (lang === 'hi') utterance.lang = 'hi-IN';
-                else utterance.lang = 'en-US';
-                
-                utterance.rate = 0.85; // కొంచెం నెమ్మదిగా ఉంటే స్పష్టంగా ఉంటుంది
-                utterance.pitch = 1.0; 
+
+                // --- GOOGLE VOICE SELECTION ---
+                const allVoices = window.speechSynthesis.getVoices();
+                let selectedVoice = null;
+
+                if (lang === 'hi') {
+                    selectedVoice = allVoices.find(v => v.name.includes('Google') && v.lang.includes('hi')) 
+                                 || allVoices.find(v => v.lang.includes('hi'));
+                    utterance.lang = 'hi-IN';
+                } else if (lang === 'te') {
+                    selectedVoice = allVoices.find(v => v.lang.includes('te'));
+                    utterance.lang = 'te-IN';
+                } else {
+                    selectedVoice = allVoices.find(v => v.name.includes('Google') && v.lang.includes('en-US')) 
+                                 || allVoices.find(v => v.lang.includes('en-US'));
+                    utterance.lang = 'en-US';
+                }
+
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+
+                utterance.rate = 0.9; 
+                utterance.pitch = 1.0;
 
                 utterance.onstart = () => { currentlySpeakingText = text; };
                 utterance.onend = () => { currentlySpeakingText = null; };
-                
+
                 window.speechSynthesis.speak(utterance);
             };
-
 
             const saveSettings = () => {
                 // apiKey సేవ్ లాజిక్ మళ్లీ జోడించబడింది
